@@ -1,5 +1,5 @@
 services:
-    - url: http://10.162.222.151/
+    - url: http://10.162.222.151
       timeout: 3
     - url: https://prod.alm.gpdm.fresenius.com
       timeout: 3
@@ -7,7 +7,7 @@ services:
       timeout: 3
     - url: https://central.artifactory.alm.gpdm.fresenius.com
       timeout: 3
-    - url: https://qdok.ads.fresenius.com/
+    - url: https://qdok.ads.fresenius.com
       timeout: 3
     - url: https://www.lrytas.lt
       timeout: 3

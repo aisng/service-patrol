@@ -105,25 +105,6 @@ func parseConfigData(path string) (*Config, error) {
 	return &config, nil
 }
 
-// func parseConfigData(path string) (*Services, error) {
-// 	data, err := os.ReadFile(path)
-
-// 	if err != nil {
-// 		fmt.Println(err)
-// 		return nil, err
-// 	}
-
-// 	var services Services
-
-// 	err = yaml.Unmarshal(data, &services)
-// 	fmt.Printf("servicefromparser: %v\n", services)
-// 	if err != nil {
-// 		fmt.Println(err)
-// 		return nil, err
-// 	}
-// 	return &services, nil
-// }
-
 func generateDefaultConfig() (*Config, error) {
 	defaultConfig := Config{
 		Services: []Service{
@@ -150,32 +131,3 @@ func generateDefaultConfig() (*Config, error) {
 	return &defaultConfig, nil
 
 }
-
-// func generateDefaultConfig() (*Services, error) {
-// 	servicesData := Services{
-// 		Services: []struct {
-// 			Url     string `yaml:"url"`
-// 			Timeout int    `yaml:"timeout"`
-// 		}{
-// 			{"http://10.162.222.151/", defaultTimeout},
-// 			{"https://prod.alm.gpdm.fresenius.com", defaultTimeout},
-// 			{"http://desw-lizenz.schweinfurt.germany.fresenius.de", defaultTimeout},
-// 			{"https://central.artifactory.alm.gpdm.fresenius.com", defaultTimeout},
-// 			{"https://qdok.ads.fresenius.com/", defaultTimeout},
-// 			{"https://www.lrytas.lt", defaultTimeout},
-// 		},
-// 	}
-
-// 	yamlData, err := yaml.Marshal(&servicesData)
-
-// 	if err != nil {
-// 		return nil, err
-// 	}
-
-// 	// 0644 permission to read, write
-// 	if err = os.WriteFile("config.yaml", yamlData, 0644); err != nil {
-// 		return nil, err
-// 	}
-// 	return &servicesData, nil
-
-// }

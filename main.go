@@ -16,6 +16,10 @@ type Config struct {
 	Limit    int       `yaml:"limit"`
 }
 
+type ServiceStatus struct {
+	ServiceUrl string `json:"url"`
+}
+
 const defaultTimeout int = 3
 const defaultLimit int = 2
 const configPath string = "./config.yaml"
@@ -35,6 +39,7 @@ func main() {
 	for _, service := range services {
 		isRunning, err := requestHeadFromService(service.Url, service.Timeout)
 		// TODO: read service-status.json to check what was down before
+		// TODO:
 		if isRunning {
 			// TODO: send mail if there was sth down and is up now
 			fmt.Printf("Service %s is running\n", service.Url)

@@ -1,0 +1,13 @@
+services:
+  - url: http://10.162.222.151/
+    timeout: 3
+  - url: https://prod.alm.gpdm.fresenius.com
+    timeout: 2
+  - url: http://desw-lizenz.schweinfurt.germany.fresenius.de
+    timeout: 3
+  - url: https://central.artifactory.alm.gpdm.fresenius.com
+    timeout: 4
+  - url: https://qdok.ads.fresenius.com/
+    timeout: 4
+  - url: https://www.lrytas.lt
+    timeout: 4

@@ -6,12 +6,19 @@ import (
 	"time"
 )
 
+const (
+	defaultTimeout        int    = 3
+	defaultLimit          int    = 2
+	configFilename        string = "config.yaml"
+	serviceStatusFilename string = "service-status.yaml"
+)
+
 func main() {
 
 	config := &Config{}
 	serviceStatus := &ServiceStatus{}
 
-	if err := initializeYaml(configFilename, serviceStatusFilename, config, serviceStatus); err != nil {
+	if err := initializeYamlFiles(configFilename, serviceStatusFilename, config, serviceStatus); err != nil {
 		fmt.Println(err)
 	}
 

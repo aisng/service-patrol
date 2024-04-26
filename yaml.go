@@ -28,7 +28,7 @@ func readYaml(filename string, yd YamlData) error {
 	return yaml.Unmarshal(yamlData, yd)
 }
 
-func initializeYaml(configFilename, serviceStatusFilename string, config *Config, serviceStatus *ServiceStatus) error {
+func initializeYamlFiles(configFilename, serviceStatusFilename string, config *Config, serviceStatus *ServiceStatus) error {
 	yamlFiles := map[string]YamlData{
 		configFilename:        config,
 		serviceStatusFilename: serviceStatus,

@@ -1,9 +1,5 @@
 package main
 
-const (
-	serviceStatusFilename string = "service-status.yaml"
-)
-
 type Service struct {
 	Url     string `yaml:"url"`
 	Timeout int    `yaml:"timeout"`

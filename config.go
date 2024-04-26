@@ -1,10 +1,6 @@
 package main
 
-const (
-	defaultTimeout int    = 3
-	defaultLimit   int    = 2
-	configFilename string = "config.yaml"
-)
+const ()
 
 type Config struct {
 	Services []Service `yaml:"services"`

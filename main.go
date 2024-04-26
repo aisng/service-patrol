@@ -114,7 +114,7 @@ func main() {
 	config := &Config{}
 	serviceStatus := &ServiceStatus{}
 
-	if err := initializeYamlData(configFilename, serviceStatusFilename, config, serviceStatus); err != nil {
+	if err := initializeYaml(configFilename, serviceStatusFilename, config, serviceStatus); err != nil {
 		fmt.Println(err)
 	}
 
@@ -173,7 +173,7 @@ func readYaml(filename string, yd YamlData) error {
 	return yaml.Unmarshal(yamlData, yd)
 }
 
-func initializeYamlData(configFilename, serviceStatusFilename string, config *Config, serviceStatus *ServiceStatus) error {
+func initializeYaml(configFilename, serviceStatusFilename string, config *Config, serviceStatus *ServiceStatus) error {
 	yamlFiles := map[string]YamlData{
 		configFilename:        config,
 		serviceStatusFilename: serviceStatus,

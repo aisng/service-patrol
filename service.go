@@ -1,8 +1,25 @@
 package main
 
+import (
+	"net/http"
+	"time"
+)
+
 type Service struct {
-	Url     string `yaml:"url"`
-	Timeout int    `yaml:"timeout"`
+	Url string `yaml:"url"`
+}
+
+func (s *Service) isRunning(timeout int) (bool, error) {
+	client := http.Client{
+		Timeout: time.Second * time.Duration(timeout),
+	}
+
+	resp, err := client.Head(s.Url)
+	if err != nil {
+		return false, err
+	}
+	defer resp.Body.Close()
+	return true, nil
 }
 
 type ServiceStatus struct {
@@ -27,7 +44,7 @@ func (ss *ServiceStatus) GenerateDefault() {
 	ss.AffectedServices = []string{}
 }
 
-func (ss *ServiceStatus) AddAffected(url string) {
+func (ss *ServiceStatus) addAffected(url string) {
 	for _, affectedService := range ss.AffectedServices {
 		if affectedService == url {
 			return
@@ -36,7 +53,7 @@ func (ss *ServiceStatus) AddAffected(url string) {
 	ss.AffectedServices = append(ss.AffectedServices, url)
 }
 
-func (ss *ServiceStatus) RemoveAffected(url string) {
+func (ss *ServiceStatus) removeAffected(url string) {
 	for i, affectedService := range ss.AffectedServices {
 		if affectedService == url {
 			ss.AffectedServices = append(ss.AffectedServices[:i], ss.AffectedServices[i+1:]...)
@@ -45,17 +62,17 @@ func (ss *ServiceStatus) RemoveAffected(url string) {
 	}
 }
 
-func (ss *ServiceStatus) IncrementDownCount() {
+func (ss *ServiceStatus) incrementDownCount() {
 	ss.DownCount++
 }
 
-func (ss *ServiceStatus) DecrementDownCount() {
+func (ss *ServiceStatus) decrementDownCount() {
 	if ss.DownCount > 0 {
 		ss.DownCount--
 	}
 }
 
-func (ss *ServiceStatus) IsAffected(url string) bool {
+func (ss *ServiceStatus) isAffected(url string) bool {
 	for _, affectedService := range ss.AffectedServices {
 		if url == affectedService {
 			return true

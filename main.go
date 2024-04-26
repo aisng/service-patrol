@@ -2,8 +2,6 @@ package main
 
 import (
 	"fmt"
-	"net/http"
-	"time"
 )
 
 const (
@@ -15,48 +13,63 @@ const (
 
 func main() {
 
-	config := &Config{}
-	serviceStatus := &ServiceStatus{}
+	var config Config
+	var serviceStatus ServiceStatus
 
-	if err := initializeYamlFiles(configFilename, serviceStatusFilename, config, serviceStatus); err != nil {
+	if err := initializeYamlFiles(configFilename, serviceStatusFilename, &config, &serviceStatus); err != nil {
 		fmt.Println(err)
 	}
 
 	services := config.Services
 
 	for _, service := range services {
-		isRunning, err := requestHeadFromService(service.Url, service.Timeout)
+		isRunning, err := service.isRunning(config.Timeout)
+
+		if err != nil {
+			fmt.Printf("Service %s is down: '%s'\n", service.Url, err)
+			serviceStatus.addAffected(service.Url)
+			serviceStatus.incrementDownCount()
+		}
+
+		if isRunning && serviceStatus.isAffected(service.Url) {
+			serviceStatus.removeAffected(service.Url)
+			serviceStatus.decrementDownCount()
+			fmt.Println("Recovered: ", service.Url)
+		}
+
 		if isRunning {
 			fmt.Printf("Service %s is running\n", service.Url)
-			if serviceStatus.IsAffected(service.Url) {
-				serviceStatus.RemoveAffected(service.Url)
-				serviceStatus.DecrementDownCount()
-				fmt.Println("Recovered: ", service.Url)
-			}
-
-			// TODO: send mail if there was sth down and is up now
-		} else {
-			serviceStatus.AddAffected(service.Url)
-			serviceStatus.IncrementDownCount()
-			fmt.Printf("Service %s is down: '%s'\n", service.Url, err)
 		}
 	}
 
 	fmt.Println("-------------------------------------------")
 	serviceStatus.Write(serviceStatusFilename)
-	fmt.Printf("Down count: %d\n", serviceStatus.DownCount)
-	fmt.Println(config.Limit > serviceStatus.DownCount)
+	// fmt.Printf("Down count: %d\n", serviceStatus.DownCount)
+	// fmt.Println(config.DownLimit > serviceStatus.DownCount)
+	// fmt.Printf("RECOVERED: %v", recoveredServices)
+	// sendMail(config.MailingList)
 }
 
-func requestHeadFromService(url string, timeout int) (bool, error) {
-	client := http.Client{
-		Timeout: time.Second * time.Duration(timeout),
-	}
+// func checkServicesStatus(services []Service, serviceStatus *ServiceStatus) recoveredServices {
+// 	recoveredServices := []string{}
 
-	resp, err := client.Head(url)
-	if err != nil {
-		return false, err
-	}
-	defer resp.Body.Close()
-	return true, nil
-}
+// 	for _, service := range services {
+// 		isRunning, err := isServiceRunning(service.Url, service.Timeout)
+// 		if err != nil {
+// 			return err
+// 		}
+// 		if isRunning {
+// 			fmt.Printf("Service %s is running\n", service.Url)
+// 			if serviceStatus.IsAffected(service.Url) {
+// 				serviceStatus.RemoveAffected(service.Url)
+// 				serviceStatus.DecrementDownCount()
+// 				recoveredServices = append(recoveredServices, service.Url)
+// 				fmt.Println("Recovered: ", service.Url)
+// 			}
+// 		} else {
+// 			serviceStatus.AddAffected(service.Url)
+// 			serviceStatus.IncrementDownCount()
+// 			fmt.Printf("Service %s is down: '%s'\n", service.Url, err)
+// 		}
+// 	}
+// }

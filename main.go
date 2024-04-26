@@ -15,14 +15,13 @@ func main() {
 
 	var config Config
 	var serviceStatus ServiceStatus
+	var recoveredServices []string
 
 	if err := initializeYamlFiles(configFilename, serviceStatusFilename, &config, &serviceStatus); err != nil {
 		fmt.Println(err)
 	}
 
-	services := config.Services
-
-	for _, service := range services {
+	for _, service := range config.Services {
 		isRunning, err := service.isRunning(config.Timeout)
 
 		if err != nil {
@@ -34,12 +33,28 @@ func main() {
 		if isRunning && serviceStatus.isAffected(service.Url) {
 			serviceStatus.removeAffected(service.Url)
 			serviceStatus.decrementDownCount()
+			recoveredServices = append(recoveredServices, service.Url)
+
 			fmt.Println("Recovered: ", service.Url)
 		}
 
 		if isRunning {
 			fmt.Printf("Service %s is running\n", service.Url)
 		}
+	}
+
+	if len(recoveredServices) > 0 {
+		fmt.Println(recoveredServices)
+		// send recovered email
+	}
+
+	// TODO: figure out how to avoid two emails being sent at the same time - that sth recovered and the list of down
+	// ones
+	// solution could be recoveredExists && downExists == true -> send 3rd email template that there are down ones and
+	// recovered ones
+	if serviceStatus.DownCount >= config.DownLimit {
+		fmt.Println(serviceStatus.AffectedServices)
+		// send services down email
 	}
 
 	fmt.Println("-------------------------------------------")
@@ -49,27 +64,3 @@ func main() {
 	// fmt.Printf("RECOVERED: %v", recoveredServices)
 	// sendMail(config.MailingList)
 }
-
-// func checkServicesStatus(services []Service, serviceStatus *ServiceStatus) recoveredServices {
-// 	recoveredServices := []string{}
-
-// 	for _, service := range services {
-// 		isRunning, err := isServiceRunning(service.Url, service.Timeout)
-// 		if err != nil {
-// 			return err
-// 		}
-// 		if isRunning {
-// 			fmt.Printf("Service %s is running\n", service.Url)
-// 			if serviceStatus.IsAffected(service.Url) {
-// 				serviceStatus.RemoveAffected(service.Url)
-// 				serviceStatus.DecrementDownCount()
-// 				recoveredServices = append(recoveredServices, service.Url)
-// 				fmt.Println("Recovered: ", service.Url)
-// 			}
-// 		} else {
-// 			serviceStatus.AddAffected(service.Url)
-// 			serviceStatus.IncrementDownCount()
-// 			fmt.Printf("Service %s is down: '%s'\n", service.Url, err)
-// 		}
-// 	}
-// }

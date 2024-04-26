@@ -48,8 +48,8 @@ func main() {
 		// send recovered email
 	}
 
-	// TODO: figure out how to avoid two emails being sent at the same time - that sth recovered and the list of down
-	// ones
+	// TODO: figure out how to avoid two emails being sent at the same time, so that sth recovered and
+	// the list of down ones
 	// solution could be recoveredExists && downExists == true -> send 3rd email template that there are down ones and
 	// recovered ones
 	if serviceStatus.DownCount >= config.DownLimit {

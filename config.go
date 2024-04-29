@@ -1,8 +1,9 @@
 package main
 
 type Config struct {
-	DownLimit   int       `yaml:"down_limit"`
-	Timeout     int       `yaml:"timeout"`
+	DownLimit   uint      `yaml:"down_limit"`
+	Timeout     uint      `yaml:"timeout"`
+	Frequency   uint      `yaml:"frequency"`
 	Services    []Service `yaml:"services"`
 	MailingList []string  `yaml:"mailing_list"`
 }

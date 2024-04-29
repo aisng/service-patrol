@@ -9,7 +9,7 @@ type Service struct {
 	Url string `yaml:"url"`
 }
 
-func (s *Service) isRunning(timeout int) (bool, error) {
+func (s *Service) isRunning(timeout uint) (bool, error) {
 	client := http.Client{
 		Timeout: time.Second * time.Duration(timeout),
 	}
@@ -23,7 +23,7 @@ func (s *Service) isRunning(timeout int) (bool, error) {
 }
 
 type ServiceStatus struct {
-	DownCount        int      `yaml:"down_count"`
+	DownCount        uint     `yaml:"down_count"`
 	AffectedServices []string `yaml:"affected_services"`
 }
 

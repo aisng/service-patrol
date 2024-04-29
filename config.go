@@ -19,6 +19,7 @@ func (c *Config) Read(filename string) error {
 func (c *Config) GenerateDefault() {
 	c.DownLimit = defaultLimit
 	c.Timeout = defaultTimeout
+	c.Frequency = defaultFrequency
 	c.Services = []Service{
 		{Url: "http://10.162.222.151"},
 		{Url: "https://prod.alm.gpdm.fresenius.com"},
@@ -28,8 +29,7 @@ func (c *Config) GenerateDefault() {
 		{Url: "https://www.lrytas.lt"},
 	}
 	c.MailingList = []string{
-		"mordechai.lashaun@dockerbike.com",
-		"pcjhwssca2@zlorkun.com",
+		"dov.adarien@dockerbike.com",
 	}
 
 }

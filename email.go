@@ -3,12 +3,8 @@ package main
 import (
 	"fmt"
 	"net/smtp"
+	"os"
 )
-
-// "Connection lost" email
-// 	Hello,
-// 	connection to bellow pages/IP's are down:
-// 	Next check will be made in Y ammount of hours.
 
 func getMessage(downServices []string, recoveredServices []string, nextCheckIn uint) string {
 	var subject string
@@ -25,28 +21,18 @@ func getMessage(downServices []string, recoveredServices []string, nextCheckIn u
 	if areServicesDown {
 		for _, service := range downServices {
 			downList += " - " + service + "\n"
-			// if i == len(downServices)-1 {
-			// 	downList += " - " + service
-			// } else {
-			// 	downList += " - " + service + "\n"
-			// }
 		}
 	}
+
 	if areServicesRecovered {
 		for _, service := range recoveredServices {
 			recoveredList += " - " + service + "\n"
-
-			// if i == len(downServices)-1 {
-			// 	recoveredList += " - " + service
-			// } else {
-			// 	recoveredList += " - " + service + "\n"
-			// }
 		}
 	}
 
 	if areServicesDown && areServicesRecovered {
 		subject = "Connection to FMC services recovered"
-		body = fmt.Sprintf("Hello,\n\nconnection to the pages/IP's below are recovered:\n%s\nThe following pages are still down: %s\n%s", recoveredList, downList, nextCheckString)
+		body = fmt.Sprintf("Hello,\n\nconnection to the pages/IP's below are recovered:\n%s\nThe following pages are still down:\n%s\n%s", recoveredList, downList, nextCheckString)
 
 	} else if areServicesDown && !areServicesRecovered {
 		subject = "Connection to FMC services lost"
@@ -64,7 +50,8 @@ func sendMail(mailingList []string, message string) {
 	auth := smtp.PlainAuth(
 		"",
 		"***REMOVED***",
-		"***REMOVED***",
+		// "***REMOVED***",
+		os.Getenv("MAILTOKEN"),
 		"smtp.gmail.com",
 	)
 

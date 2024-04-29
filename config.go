@@ -29,7 +29,6 @@ func (c *Config) GenerateDefault() {
 		{Url: "https://www.lrytas.lt"},
 	}
 	c.MailingList = []string{
-		"dov.adarien@dockerbike.com",
+		"mohammad.abshir@dockerbike.com",
 	}
-
 }

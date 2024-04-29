@@ -32,15 +32,16 @@ func getMessage(downServices []string, recoveredServices []string, nextCheckIn u
 
 	if areServicesDown && areServicesRecovered {
 		subject = "Connection to FMC services recovered"
-		body = fmt.Sprintf("Hello,\n\nconnection to the pages/IP's below are recovered:\n%s\nThe following pages are still down:\n%s\n%s", recoveredList, downList, nextCheckString)
+		body = fmt.Sprintf("Hello,\n\nconnection to the pages/IPs below are recovered:\n%s\n"+
+			"The following pages are still down:\n%s\n%s", recoveredList, downList, nextCheckString)
 
 	} else if areServicesDown && !areServicesRecovered {
 		subject = "Connection to FMC services lost"
-		body = fmt.Sprintf("Hello,\n\nconnection to the pages/IP's below are down:\n%s\n%s", downList, nextCheckString)
+		body = fmt.Sprintf("Hello,\n\nconnection to the pages/IPs below is down:\n%s\n%s", downList, nextCheckString)
 
 	} else if areServicesRecovered && !areServicesDown {
 		subject = "Connection to FMC services recovered"
-		body = fmt.Sprintf("Hello,\n\nconnection to the pages/IP's below are recovered:\n%s\n%s", recoveredList, nextCheckString)
+		body = fmt.Sprintf("Hello,\n\nconnection to the pages/IPs below is recovered:\n%s\n%s", recoveredList, nextCheckString)
 	}
 
 	return fmt.Sprintf("Subject: %s\n%s", subject, body)
@@ -50,7 +51,6 @@ func sendMail(mailingList []string, message string) {
 	auth := smtp.PlainAuth(
 		"",
 		"***REMOVED***",
-		// "***REMOVED***",
 		os.Getenv("MAILTOKEN"),
 		"smtp.gmail.com",
 	)

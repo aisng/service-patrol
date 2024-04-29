@@ -38,24 +38,17 @@ func main() {
 		}
 	}
 
+	if err := serviceStatus.Write(serviceStatusFilename); err != nil {
+		fmt.Println(err)
+	}
+
 	isDownLimitExceeded := serviceStatus.DownCount >= config.DownLimit
 	areServicesRecovered := len(recoveredServices) > 0
 
-	emailMessage = getMessage(serviceStatus.AffectedServices, recoveredServices, config.Frequency)
-
-	// TODO: simplify control flow below
-	if isDownLimitExceeded && areServicesRecovered {
+	if isDownLimitExceeded || areServicesRecovered {
+		emailMessage = getMessage(serviceStatus.AffectedServices, recoveredServices, config.Frequency)
 		sendMail(config.MailingList, emailMessage)
-
-	} else if isDownLimitExceeded && !areServicesRecovered {
-		sendMail(config.MailingList, emailMessage)
-
-	} else if areServicesRecovered && !isDownLimitExceeded {
-
-		sendMail(config.MailingList, emailMessage)
+		fmt.Println(emailMessage)
 	}
-
-	fmt.Println(emailMessage)
-	serviceStatus.Write(serviceStatusFilename)
 
 }

@@ -17,6 +17,7 @@ func main() {
 	var config Config
 	var serviceStatus ServiceStatus
 	var recoveredServices []string
+	var affectedServices []string
 	var emailMessage string
 
 	yamlFiles := map[string]YamlData{
@@ -32,16 +33,19 @@ func main() {
 		isRunning, err := service.isRunning(config.Timeout)
 
 		if err != nil {
-			serviceStatus.addAffected(service.Url)
+			// serviceStatus.addAffected(service.Url)
+			affectedServices = append(affectedServices, service.Url)
 			serviceStatus.incrementDownCount()
 		}
 
 		if isRunning && serviceStatus.isAffected(service.Url) {
-			serviceStatus.removeAffected(service.Url)
-			serviceStatus.decrementDownCount()
+			// serviceStatus.removeAffected(service.Url)
 			recoveredServices = append(recoveredServices, service.Url)
+			serviceStatus.decrementDownCount()
 		}
 	}
+
+	serviceStatus.AffectedServices = affectedServices
 
 	if err := serviceStatus.Write(serviceStatusFilename); err != nil {
 		fmt.Println(err)
@@ -52,7 +56,7 @@ func main() {
 
 	if isDownLimitExceeded || areServicesRecovered {
 		emailMessage = getMessage(serviceStatus.AffectedServices, recoveredServices, config.Frequency)
-		sendMail(config.MailingList, emailMessage)
+		// sendMail(config.MailingList, emailMessage)
 		fmt.Println(emailMessage)
 	}
 

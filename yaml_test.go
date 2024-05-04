@@ -79,6 +79,7 @@ func TestInitializeYamlData(t *testing.T) {
 	}
 
 	err := initializeYamlFiles(yamlFilesMap)
+
 	if err != nil {
 		t.Errorf("error initializing yaml files: %v", err)
 	}
@@ -88,11 +89,11 @@ func TestInitializeYamlData(t *testing.T) {
 	}
 
 	if config.Timeout != defaultTimeout {
-		t.Errorf("error reading config.Timeout. Expected: %d, got: %d", defaultTimeout, config.DownLimit)
+		t.Errorf("error reading config.Timeout. Expected: %d, got: %d", defaultTimeout, config.Timeout)
 	}
 
-	if config !=  {
-		
+	if config.Frequency != defaultFrequency {
+		t.Errorf("error reading config.Frequency. Expected: %d, got: %d", defaultFrequency, config.Frequency)
 	}
 
 	// t.Logf("config %v", config)

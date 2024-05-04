@@ -1,27 +1,5 @@
 package main
 
-import (
-	"net/http"
-	"time"
-)
-
-type Service struct {
-	Url string `yaml:"url"`
-}
-
-func (s *Service) isRunning(timeout uint) (bool, error) {
-	client := http.Client{
-		Timeout: time.Second * time.Duration(timeout),
-	}
-
-	resp, err := client.Head(s.Url)
-	if err != nil {
-		return false, err
-	}
-	defer resp.Body.Close()
-	return true, nil
-}
-
 type ServiceStatus struct {
 	DownCount        uint     `yaml:"down_count"`
 	AffectedServices []string `yaml:"affected_services"`

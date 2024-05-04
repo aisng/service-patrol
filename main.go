@@ -19,7 +19,12 @@ func main() {
 	var recoveredServices []string
 	var emailMessage string
 
-	if err := initializeYamlFiles(configFilename, serviceStatusFilename, &config, &serviceStatus); err != nil {
+	yamlFiles := map[string]YamlData{
+		configFilename:        &config,
+		serviceStatusFilename: &serviceStatus,
+	}
+
+	if err := initializeYamlFiles(yamlFiles); err != nil {
 		fmt.Println(err)
 	}
 

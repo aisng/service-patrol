@@ -29,10 +29,6 @@ func readYaml(filename string, yd YamlData) error {
 }
 
 func initializeYamlFiles(filesMap map[string]YamlData) error {
-	// yamlFiles := map[string]YamlData{
-	// 	configFilename:        config,
-	// 	serviceStatusFilename: serviceStatus,
-	// }
 
 	for name, data := range filesMap {
 		_, err := os.Stat(name)

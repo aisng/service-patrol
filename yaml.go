@@ -6,6 +6,9 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
+// TODO: reconsider the necessity of parametrizing interface methods
+// when default values can be passed straight to writeYaml and readYaml
+
 type YamlData interface {
 	Write(filename string) error
 	Read(filename string) error
@@ -30,16 +33,16 @@ func readYaml(filename string, yd YamlData) error {
 
 func initializeYamlFiles(filesMap map[string]YamlData) error {
 
-	for name, data := range filesMap {
-		_, err := os.Stat(name)
+	for filename, data := range filesMap {
+		_, err := os.Stat(filename)
 		if err == nil {
-			if err := data.Read(name); err != nil {
+			if err := data.Read(filename); err != nil {
 				return err
 			}
 		} else if os.IsNotExist(err) {
 			data.GenerateDefault()
 
-			if err := data.Write(name); err != nil {
+			if err := data.Write(filename); err != nil {
 				return err
 			}
 		}

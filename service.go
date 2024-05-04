@@ -44,23 +44,23 @@ func (ss *ServiceStatus) GenerateDefault() {
 	ss.AffectedServices = []string{}
 }
 
-func (ss *ServiceStatus) addAffected(url string) {
-	for _, affectedService := range ss.AffectedServices {
-		if affectedService == url {
-			return
-		}
-	}
-	ss.AffectedServices = append(ss.AffectedServices, url)
-}
+// func (ss *ServiceStatus) addAffected(url string) {
+// 	for _, affectedService := range ss.AffectedServices {
+// 		if affectedService == url {
+// 			return
+// 		}
+// 	}
+// 	ss.AffectedServices = append(ss.AffectedServices, url)
+// }
 
-func (ss *ServiceStatus) removeAffected(url string) {
-	for i, affectedService := range ss.AffectedServices {
-		if affectedService == url {
-			ss.AffectedServices = append(ss.AffectedServices[:i], ss.AffectedServices[i+1:]...)
-			return
-		}
-	}
-}
+// func (ss *ServiceStatus) removeAffected(url string) {
+// 	for i, affectedService := range ss.AffectedServices {
+// 		if affectedService == url {
+// 			ss.AffectedServices = append(ss.AffectedServices[:i], ss.AffectedServices[i+1:]...)
+// 			return
+// 		}
+// 	}
+// }
 
 func (ss *ServiceStatus) incrementDownCount() {
 	ss.DownCount++

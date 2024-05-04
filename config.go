@@ -32,3 +32,22 @@ func (c *Config) GenerateDefault() {
 		"mohammad.abshir@dockerbike.com",
 	}
 }
+
+// func (c *Config) GenerateDefault() *Config {
+// 	return &Config{
+// 		DownLimit: defaultLimit,
+// 		Timeout:   defaultTimeout,
+// 		Frequency: defaultFrequency,
+// 		Services: []Service{
+// 			{Url: "http://10.162.222.151"},
+// 			{Url: "https://prod.alm.gpdm.fresenius.com"},
+// 			{Url: "http://desw-lizenz.schweinfurt.germany.fresenius.de"},
+// 			{Url: "https://central.artifactory.alm.gpdm.fresenius.com"},
+// 			{Url: "https://qdok.ads.fresenius.com"},
+// 			{Url: "https://www.lrytas.lt"},
+// 		},
+// 		MailingList: []string{
+// 			"mohammad.abshir@dockerbike.com",
+// 		},
+// 	}
+// }

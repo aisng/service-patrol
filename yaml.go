@@ -28,13 +28,13 @@ func readYaml(filename string, yd YamlData) error {
 	return yaml.Unmarshal(yamlData, yd)
 }
 
-func initializeYamlFiles(configFilename, serviceStatusFilename string, config *Config, serviceStatus *ServiceStatus) error {
-	yamlFiles := map[string]YamlData{
-		configFilename:        config,
-		serviceStatusFilename: serviceStatus,
-	}
+func initializeYamlFiles(filesMap map[string]YamlData) error {
+	// yamlFiles := map[string]YamlData{
+	// 	configFilename:        config,
+	// 	serviceStatusFilename: serviceStatus,
+	// }
 
-	for name, data := range yamlFiles {
+	for name, data := range filesMap {
 		_, err := os.Stat(name)
 		if err == nil {
 			if err := data.Read(name); err != nil {

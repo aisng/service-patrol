@@ -19,15 +19,11 @@ func getMessage(downServices []string, recoveredServices []string, nextCheckIn u
 	areServicesRecovered := len(recoveredServices) > 0
 
 	if areServicesDown {
-		for _, service := range downServices {
-			downList += " - " + service + "\n"
-		}
+		downList = generateServicesList(downServices)
 	}
 
 	if areServicesRecovered {
-		for _, service := range recoveredServices {
-			recoveredList += " - " + service + "\n"
-		}
+		recoveredList = generateServicesList(recoveredServices)
 	}
 
 	if areServicesDown && areServicesRecovered {
@@ -45,6 +41,14 @@ func getMessage(downServices []string, recoveredServices []string, nextCheckIn u
 	}
 
 	return fmt.Sprintf("Subject: %s\n%s", subject, body)
+}
+
+func generateServicesList(services []string) string {
+	var list string
+	for _, service := range services {
+		list += " - " + service + "\n"
+	}
+	return list
 }
 
 func sendMail(mailingList []string, message string) {

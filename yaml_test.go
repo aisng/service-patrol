@@ -1,7 +1,14 @@
 package main
 
 import (
+	"errors"
+	"io/fs"
+	"os"
 	"testing"
+)
+
+const (
+	testFilename string = "test.yaml"
 )
 
 type MockYamlData struct {
@@ -9,148 +16,129 @@ type MockYamlData struct {
 }
 
 func (m *MockYamlData) Write(filename string) error {
-	m.Content = "written content"
-	return nil
+	return writeYaml(filename, m)
 }
 
 func (m *MockYamlData) Read(filename string) error {
-	m.Content = "read content"
-	return nil
+	return readYaml(filename, m)
 }
 
 func (m *MockYamlData) GenerateDefault() {
-	m.Content = "default content"
+	m.Content = "default"
 }
 
-func TestWriteYaml(t *testing.T) {
-	mockData := &MockYamlData{}
+func TestWriteAndReadYaml(t *testing.T) {
+	subtests := []struct {
+		name            string
+		content         string
+		expectedContent string
+		expectedErr     error
+	}{
+		{
+			name:            "Write",
+			content:         "Written content",
+			expectedContent: "Written content",
+			expectedErr:     nil,
+		},
+		{
+			name:            "ReadFound",
+			content:         "Written content",
+			expectedContent: "Written content",
+			expectedErr:     nil,
+		},
+		{
+			name:            "ReadNotFound",
+			content:         "",
+			expectedContent: "",
+			expectedErr:     fs.ErrNotExist,
+		},
+	}
 
-	err := mockData.Write("test_write.yaml")
+	for _, subtest := range subtests {
+		t.Run(subtest.name, func(t *testing.T) {
+			mockData := &MockYamlData{
+				Content: subtest.content,
+			}
+
+			defer os.Remove(testFilename)
+			switch subtest.name {
+			case "Write":
+				err := mockData.Write(testFilename)
+				if err != nil {
+					t.Errorf("Error writing yaml: %v", err)
+				}
+			case "Read":
+				err := mockData.Read(testFilename)
+				if err != nil {
+					t.Errorf("Error reading yaml: %v", err)
+				}
+			case "ReadNotFound":
+				err := mockData.Read("non-existant.yaml")
+				if !errors.Is(err, subtest.expectedErr) {
+					t.Errorf("Expected: %v, got: %v", subtest.expectedErr, err)
+				}
+			}
+
+		})
+	}
+
+}
+func TestWrite(t *testing.T) {
+	mockData := &MockYamlData{
+		Content: "written",
+	}
+
+	defer os.Remove(testFilename)
+	err := mockData.Write(testFilename)
 	if err != nil {
 		t.Errorf("Error writing yaml: %v", err)
 	}
 
-	expected := "written content"
+	expected := "written"
 
 	if mockData.Content != expected {
-		t.Errorf("Expected: %v, got: %v", expected, mockData.Content)
+		t.Errorf("Expected: %s, got: %s", expected, mockData.Content)
 	}
 
 }
 
-func TestReadYaml(t *testing.T) {
-	mockData := &MockYamlData{}
+func TestRead(t *testing.T) {
+	mockData := &MockYamlData{
+		Content: "read written",
+	}
 
-	err := mockData.Read("test_read.yaml")
+	defer os.Remove(testFilename)
+	mockData.Write(testFilename)
+
+	err := mockData.Read(testFilename)
 	if err != nil {
 		t.Errorf("Error reading yaml: %v", err)
 	}
 
-	expected := "read content"
+	expected := "read written"
 
 	if mockData.Content != expected {
-		t.Errorf("Expected: %v, got: %v", expected, mockData.Content)
+		t.Errorf("Expected: %s, got: %s", expected, mockData.Content)
 	}
 
 }
 
-func TestInitializeYamlData(t *testing.T) {
-	notYetWrittenData := &MockYamlData{}
+func TestInitializeYamlFiles(t *testing.T) {
+	defaultData := &MockYamlData{}
 
-	filesMap := map[string]YamlData{"new_yaml.yaml": notYetWrittenData}
+	filesMap := map[string]YamlData{testFilename: defaultData}
+
+	defer os.Remove(testFilename)
 
 	err := initializeYamlFiles(filesMap)
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 	}
 
-	if notYetWrittenData.Content != "default content" {
-		t.Errorf("Expected: default content, got: %v", notYetWrittenData.Content)
+	expected := "default"
+
+	if defaultData.Content != "default" {
+		t.Errorf("Expected: %s, got: %s", expected, defaultData.Content)
 	}
 
-	// nonExistingData := &MockYamlData{}
-
 }
-
-// func TestInitializeYamlData(t *testing.T) {
-// 	config := &Config{
-// 		DownLimit: 3,
-// 		Timeout:   10,
-// 		Services: []Service{
-// 			{Url: "https://www.example.com"},
-// 		},
-// 		MailingList: []string{"someone@example.com"},
-// 	}
-
-// 	serviceStatus := &ServiceStatus{}
-
-// 	configFilename := "config_test.yaml"
-// 	serviceStatusFilename := "service-status_test.yaml"
-
-// 	defer os.Remove(configFilename)
-// 	defer os.Remove(serviceStatusFilename)
-
-// 	yamlFilesMap := map[string]YamlData{
-// 		configFilename:        config,
-// 		serviceStatusFilename: serviceStatus,
-// 	}
-
-// 	err := initializeYamlFiles(yamlFilesMap)
-
-// 	if err != nil {
-// 		t.Errorf("error initializing yaml files: %v", err)
-// 	}
-
-// 	if config.DownLimit != defaultLimit {
-// 		t.Errorf("error reading config.DownLimit. Expected: %d, got: %d", defaultLimit, config.DownLimit)
-// 	}
-
-// 	if config.Timeout != defaultTimeout {
-// 		t.Errorf("error reading config.Timeout. Expected: %d, got: %d", defaultTimeout, config.Timeout)
-// 	}
-
-// 	if config.Frequency != defaultFrequency {
-// 		t.Errorf("error reading config.Frequency. Expected: %d, got: %d", defaultFrequency, config.Frequency)
-// 	}
-
-// t.Logf("config %v", config)
-
-// testcases := []struct {
-// 	config        Config
-// 	serviceStatus ServiceStatus
-// }{
-// 	{
-// 		config: Config{
-// 			DownLimit: 3,
-// 			Timeout:   10,
-// 			Services: []Service{
-// 				{Url: "https://www.example.com"},
-// 			},
-// 			MailingList: []string{"someone@example.com"},
-// 		},
-// 	},
-// 	{
-// 		serviceStatus: ServiceStatus{
-// 			DownCount:        0,
-// 			AffectedServices: []string{},
-// 		},
-// 	},
-// 	{
-// 		config: Config{},
-// 	},
-// 	{
-// 		serviceStatus: ServiceStatus{},
-// 	},
-// }
-
-// config := &MockYamlData{}
-// serviceStatus := &MockYamlData{}
-// for _, tc := range testcases {
-
-// 	err := initializeYamlFiles("config_test.yaml", "service_status_test.yaml", &tc.config, &tc.serviceStatus)
-
-// 	if err != nil {
-// 		t.Errorf("expected %v, got %v", tc.config, err)
-// 	}
-// }
-// }

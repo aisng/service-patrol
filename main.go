@@ -34,9 +34,13 @@ func main() {
 	}
 
 	for _, serviceUrl := range config.Services {
-		isRunning, err := isServiceRunning(client, serviceUrl)
+		isRunning, err := isServiceRunning(&client, serviceUrl)
 
 		if err != nil {
+			fmt.Println(err)
+		}
+
+		if !isRunning {
 			affectedServices = append(affectedServices, serviceUrl)
 			serviceStatus.incrementDownCount()
 		}
@@ -64,7 +68,7 @@ func main() {
 
 }
 
-func isServiceRunning(client http.Client, url string) (bool, error) {
+func isServiceRunning(client *http.Client, url string) (bool, error) {
 	resp, err := client.Head(url)
 	if err != nil {
 		return false, err

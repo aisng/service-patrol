@@ -32,7 +32,6 @@ func readYaml(filename string, yd YamlData) error {
 }
 
 func initializeYamlFiles(filesMap map[string]YamlData) error {
-
 	for filename, data := range filesMap {
 		_, err := os.Stat(filename)
 
@@ -52,20 +51,6 @@ func initializeYamlFiles(filesMap map[string]YamlData) error {
 		if err != nil {
 			return err
 		}
-
-		// if err == nil {
-		// 	if err := data.Read(filename); err != nil {
-		// 		return err
-		// 	}
-
-		// } else if os.IsNotExist(err) {
-		// 	data.GenerateDefault()
-
-		// 	if err := data.Write(filename); err != nil {
-		// 		return err
-		// 	}
-		// }
-
 	}
 	return nil
 }

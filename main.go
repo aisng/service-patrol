@@ -15,18 +15,13 @@ const (
 )
 
 func main() {
-
 	var config Config
 	var serviceStatus ServiceStatus
 	var recoveredServices []string
 	var affectedServices []string
 	var emailMessage string
-	var yamlFiles = make(map[string]YamlData)
+	var yamlFiles = make(map[string]YamlData, 2)
 
-	// yamlFiles := map[string]YamlData{
-	// 	configFilename:        &config,
-	// 	serviceStatusFilename: &serviceStatus,
-	// }
 	yamlFiles[configFilename] = &config
 	yamlFiles[serviceStatusFilename] = &serviceStatus
 

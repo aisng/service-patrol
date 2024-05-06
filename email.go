@@ -32,7 +32,7 @@ func getMessage(downServices []string, recoveredServices []string, nextCheckIn u
 
 	if areServicesDown && areServicesRecovered {
 		subject = "Connection to FMC services recovered"
-		body = fmt.Sprintf("Hello,\n\nconnection to the pages/IPs below are recovered:\n%s\n"+
+		body = fmt.Sprintf("Hello,\n\nconnection to the pages/IPs below is recovered:\n%s\n"+
 			"The following pages are still down:\n%s\n%s", recoveredList, downList, nextCheckString)
 
 	} else if areServicesDown && !areServicesRecovered {

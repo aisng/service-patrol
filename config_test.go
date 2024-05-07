@@ -36,3 +36,16 @@ func TestReadAndWriteConfig(t *testing.T) {
 		t.Errorf("Expected: %v, got: %v", expectedConfig, readConfig)
 	}
 }
+
+func TestGenerateDefaultConfig(t *testing.T) {
+	defaultConfig := &Config{}
+	defaultConfig.GenerateDefault()
+
+	expectedConfig := &Config{}
+	expectedConfig.GenerateDefault()
+
+	if !reflect.DeepEqual(defaultConfig, expectedConfig) {
+		t.Errorf("Expected: %v, got: %v", expectedConfig, defaultConfig)
+
+	}
+}

@@ -69,6 +69,14 @@ func TestServiceStatus(t *testing.T) {
 				AffectedServices: []string{"service3", "service1"},
 			},
 		},
+		{
+			name:    "Default",
+			initial: ServiceStatus{},
+			expected: ServiceStatus{
+				DownCount:        0,
+				AffectedServices: []string{},
+			},
+		},
 	}
 
 	var readServiceStatus ServiceStatus
@@ -116,6 +124,13 @@ func TestServiceStatus(t *testing.T) {
 			case "isNotAffected":
 				if readServiceStatus.isAffected(subtest.expected.AffectedServices[0]) {
 					t.Errorf("Expected: %v, got: %v", false, true)
+				}
+
+			case "Default":
+				subtest.initial.GenerateDefault()
+
+				if !reflect.DeepEqual(subtest.initial, subtest.expected) {
+					t.Errorf("Expected: %v, got: %v", subtest.expected, subtest.initial)
 				}
 			}
 		})

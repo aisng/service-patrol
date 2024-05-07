@@ -16,20 +16,22 @@ const (
 
 func main() {
 	var config Config
+	var client http.Client
 	var serviceStatus ServiceStatus
 	var recoveredServices []string
 	var affectedServices []string
-	// var emailMessage string
-	var yamlFiles = make(map[string]YamlData, 2)
 
-	yamlFiles[configFilename] = &config
-	yamlFiles[serviceStatusFilename] = &serviceStatus
-
-	if err := initializeYamlFiles(yamlFiles); err != nil {
+	if err := config.Read("c" + configFilename); err != nil {
 		fmt.Println(err)
+		return
 	}
 
-	client := http.Client{
+	// if err := ReadYaml("c"+configFilename, config); err != nil {
+	// 	fmt.Println(err)
+	// }
+	fmt.Println(config)
+
+	client = http.Client{
 		Timeout: time.Second * time.Duration(config.Timeout),
 	}
 
@@ -61,18 +63,11 @@ func main() {
 	areServicesRecovered := len(recoveredServices) > 0
 
 	if isDownLimitExceeded || areServicesRecovered {
-		// emailMessage = getMessage(serviceStatus.AffectedServices, recoveredServices, config.Frequency)
-		msg := Message{}
-		msg.GenerateMessage(serviceStatus.AffectedServices, recoveredServices, config.Frequency)
-		msgStr := msg.ParseTemplate()
-
-		sendMail(config.MailingList, msgStr)
+		msg := NewMessage(serviceStatus.AffectedServices, recoveredServices, config.Frequency)
+		msgStr := ParseTemplate(*msg)
+		// sendMail(config.MailingList, msgStr)
 		fmt.Println(msgStr)
-		// parsedMsg := parseTemplate(msg)
-		// sendMail(config.MailingList, parsedMsg)
-		// fmt.Println(parsedMsg)
 	}
-
 }
 
 func isServiceRunning(client *http.Client, url string) (bool, error) {

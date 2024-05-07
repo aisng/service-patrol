@@ -17,10 +17,10 @@ func (ss *ServiceStatus) Read(filename string) error {
 	return nil
 }
 
-func (ss *ServiceStatus) GenerateDefault() {
-	ss.DownCount = 0
-	ss.AffectedServices = []string{}
-}
+// func (ss *ServiceStatus) GenerateDefault() {
+// 	ss.DownCount = 0
+// 	ss.AffectedServices = []string{}
+// }
 
 // func (ss *ServiceStatus) addAffected(url string) {
 // 	for _, affectedService := range ss.AffectedServices {

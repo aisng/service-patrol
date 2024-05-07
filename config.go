@@ -9,8 +9,5 @@ type Config struct {
 }
 
 func (c *Config) Read(filename string) error {
-	// if err := validateFields(filename, c); err != nil {
-	// 	return err
-	// }
 	return readYaml(filename, c)
 }

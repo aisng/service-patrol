@@ -27,7 +27,7 @@ func readYaml(filename string, yd YamlData) error {
 	if err != nil {
 		return err
 	}
-	return yaml.Unmarshal(yamlData, yd)
+	return yaml.UnmarshalStrict(yamlData, yd)
 }
 
 func validateFields(filename string, yd YamlData) error {
@@ -41,7 +41,6 @@ func validateFields(filename string, yd YamlData) error {
 	}
 
 	// var missingKeys []string
-	// var mismatchTypes []string
 
 	for i := 0; i < structFieldCount; i++ {
 		field := structType.Field(i)
@@ -53,13 +52,6 @@ func validateFields(filename string, yd YamlData) error {
 			// missingKeys = append(missingKeys, yamlTag)
 			return fmt.Errorf("missing field in '%s': '%s'", filename, yamlTag)
 		}
-
-		// fieldType := field.Type
-		// yamlValueType := reflect.TypeOf(val)
-
-		// if fieldType != yamlValueType {
-		// 	return fmt.Errorf("type mismatch for field '%s': expected '%v', got '%v'", yamlTag, fieldType, yamlValueType)
-		// }
 	}
 
 	// if len(missingKeys) > 0 {
@@ -72,27 +64,3 @@ func validateFields(filename string, yd YamlData) error {
 
 	return nil
 }
-
-// func initializeYamlFiles(filesMap map[string]YamlData) error {
-// 	for filename, data := range filesMap {
-// 		_, err := os.Stat(filename)
-
-// 		if err != nil {
-// 			if os.IsNotExist(err) {
-// 				data.GenerateDefault()
-// 				err = data.Write(filename)
-// 				if err != nil {
-// 					return err
-// 				}
-// 			}
-// 			return err
-// 		}
-
-// 		err = data.Read(filename)
-
-// 		if err != nil {
-// 			return err
-// 		}
-// 	}
-// 	return nil
-// }

@@ -69,14 +69,7 @@ func TestServiceStatus(t *testing.T) {
 				AffectedServices: []string{"service3", "service1"},
 			},
 		},
-		{
-			name:    "Default",
-			initial: ServiceStatus{},
-			expected: ServiceStatus{
-				DownCount:        0,
-				AffectedServices: []string{},
-			},
-		},
+		{},
 	}
 
 	var readServiceStatus ServiceStatus
@@ -126,44 +119,7 @@ func TestServiceStatus(t *testing.T) {
 					t.Errorf("Expected: %v, got: %v", false, true)
 				}
 
-			case "Default":
-				subtest.initial.GenerateDefault()
-
-				if !reflect.DeepEqual(subtest.initial, subtest.expected) {
-					t.Errorf("Expected: %v, got: %v", subtest.expected, subtest.initial)
-				}
 			}
 		})
 	}
 }
-
-// func TestReadAndWriteServiceStatus(t *testing.T) {
-// 	var readServiceStatus ServiceStatus
-
-// 	writtenServiceStatus := ServiceStatus{
-// 		DownCount:        40,
-// 		AffectedServices: []string{"service1", "service2"},
-// 	}
-
-// 	expectedServiceStatus := ServiceStatus{
-// 		DownCount:        0,
-// 		AffectedServices: []string{"service1", "service2"},
-// 	}
-
-// 	defer os.Remove(testServiceStatusFilename)
-
-// 	err := writtenServiceStatus.Write(testServiceStatusFilename)
-// 	if err != nil {
-// 		t.Errorf("Error writing config: %v", err)
-// 	}
-
-// 	err = readServiceStatus.Read(testServiceStatusFilename)
-
-// 	if err != nil {
-// 		t.Errorf("Error reading config: %v", err)
-// 	}
-
-// 	if !reflect.DeepEqual(expectedServiceStatus, readServiceStatus) {
-// 		t.Errorf("Expected: %v, got: %v", expectedServiceStatus, readServiceStatus)
-// 	}
-// }

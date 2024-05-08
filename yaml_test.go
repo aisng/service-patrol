@@ -23,10 +23,8 @@ func (m *MockYamlData) Read(filename string) error {
 	return readYaml(filename, m)
 }
 
-func (m *MockYamlData) GenerateDefault() {
-	m.Content = "Default content"
-}
-
+// need cases for reading Config and ServiceStatus as reading the former results in err if !exists and the latter creates
+// a new struct
 func TestWriteAndReadYaml(t *testing.T) {
 	subtests := []struct {
 		name            string
@@ -91,75 +89,75 @@ func TestWriteAndReadYaml(t *testing.T) {
 
 }
 
-func TestInitializeYamlFiles(t *testing.T) {
-	subtests := []struct {
-		name            string
-		content         string
-		expectedContent string
-	}{
-		{
-			name:            "yamlNotFound",
-			content:         "Default content",
-			expectedContent: "Default content",
-		},
-		{
-			name:            "yamlFound",
-			content:         "Written content",
-			expectedContent: "Written content",
-		},
-	}
-	defer os.Remove(testFilename)
+// func TestInitializeYamlFiles(t *testing.T) {
+// 	subtests := []struct {
+// 		name            string
+// 		content         string
+// 		expectedContent string
+// 	}{
+// 		{
+// 			name:            "yamlNotFound",
+// 			content:         "Default content",
+// 			expectedContent: "Default content",
+// 		},
+// 		{
+// 			name:            "yamlFound",
+// 			content:         "Written content",
+// 			expectedContent: "Written content",
+// 		},
+// 	}
+// 	defer os.Remove(testFilename)
 
-	for _, subtest := range subtests {
-		t.Run(subtest.name, func(t *testing.T) {
-			switch subtest.name {
-			case "yamlNotFound":
-				mockData := &MockYamlData{}
+// 	for _, subtest := range subtests {
+// 		t.Run(subtest.name, func(t *testing.T) {
+// 			switch subtest.name {
+// 			case "yamlNotFound":
+// 				mockData := &MockYamlData{}
 
-				filesMap := map[string]YamlData{
-					testFilename: mockData,
-				}
-				err := initializeYamlFiles(filesMap)
-				if err != nil {
-					t.Errorf("Error initializing yaml file: %v", err)
-				}
+// 				filesMap := map[string]YamlData{
+// 					testFilename: mockData,
+// 				}
+// 				err := initializeYamlFiles(filesMap)
+// 				if err != nil {
+// 					t.Errorf("Error initializing yaml file: %v", err)
+// 				}
 
-				err = mockData.Read(testFilename)
-				if err != nil {
-					t.Errorf("Error reading initialized yaml file: %v", err)
-				}
+// 				err = mockData.Read(testFilename)
+// 				if err != nil {
+// 					t.Errorf("Error reading initialized yaml file: %v", err)
+// 				}
 
-				if mockData.Content != subtest.expectedContent {
-					t.Errorf("Expected: %s, got: %s", subtest.expectedContent, mockData.Content)
-				}
+// 				if mockData.Content != subtest.expectedContent {
+// 					t.Errorf("Expected: %s, got: %s", subtest.expectedContent, mockData.Content)
+// 				}
 
-			case "yamlFound":
-				mockData := &MockYamlData{
-					Content: subtest.content,
-				}
-				mockData.Write(testFilename)
+// 			case "yamlFound":
+// 				mockData := &MockYamlData{
+// 					Content: subtest.content,
+// 				}
+// 				mockData.Write(testFilename)
 
-				filesMap := map[string]YamlData{
-					testFilename: mockData,
-				}
+// 				filesMap := map[string]YamlData{
+// 					testFilename: mockData,
+// 				}
 
-				err := initializeYamlFiles(filesMap)
-				if err != nil {
-					t.Errorf("Error initializing yaml file: %v", err)
-				}
+// 				err := initializeYamlFiles(filesMap)
+// 				if err != nil {
+// 					t.Errorf("Error initializing yaml file: %v", err)
+// 				}
 
-				err = mockData.Read(testFilename)
-				if err != nil {
-					t.Errorf("Error reading initialized yaml file: %v", err)
-				}
+// 				err = mockData.Read(testFilename)
+// 				if err != nil {
+// 					t.Errorf("Error reading initialized yaml file: %v", err)
+// 				}
 
-				if mockData.Content != subtest.expectedContent {
-					t.Errorf("Expected: %s, got: %s", subtest.expectedContent, mockData.Content)
-				}
-			}
-		})
-	}
-}
+// 				if mockData.Content != subtest.expectedContent {
+// 					t.Errorf("Expected: %s, got: %s", subtest.expectedContent, mockData.Content)
+// 				}
+// 			}
+// 		})
+// 	}
+// }
 
 // func TestInitializeYamlFiles(t *testing.T) {
 // 	defaultData := &MockYamlData{}

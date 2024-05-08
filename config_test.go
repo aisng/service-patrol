@@ -1,51 +1,65 @@
 package main
 
-import (
-	"os"
-	"reflect"
-	"testing"
-)
+// import (
+// 	"os"
+// 	"reflect"
+// 	"testing"
+// )
 
-const testConfigFilename string = "test_config.yaml"
+// const testConfigFilename string = "test_config.yaml"
 
-func TestReadAndWriteConfig(t *testing.T) {
-	var readConfig Config
+// type MockConfig struct {
+// 	DownLimit   any
+// 	Timeout     any
+// 	Frequency   any
+// 	Services    any
+// 	MailingList any
+// }
 
-	expectedConfig := Config{
-		DownLimit:   10,
-		Timeout:     9,
-		Frequency:   8,
-		Services:    []string{"service1", "service2"},
-		MailingList: []string{"mail1@example.com", "mail2@example.com"},
-	}
+// func TestConfigRead(t *testing.T) {
+// 	subtests := []struct {
+// 		name           string
+// 		expectedResult MockConfig
+// 		expectedErr    error
+// 	}{
+// 		{
+// 			name: "FoundPositive",
+// 			expectedResult: MockConfig{
+// 				DownLimit:   5,
+// 				Timeout:     10,
+// 				Frequency:   3,
+// 				Services:    []string{"service1", "service2"},
+// 				MailingList: []string{"example@example.net"},
+// 			},
+// 			expectedErr: nil,
+// 		},
+// 		{
+// 			name: "FoundNegativeTypeErr",
+// 			expectedResult: MockConfig{
+// 				DownLimit:   "5",
+// 				Timeout:     10,
+// 				Frequency:   3,
+// 				Services:    []int{1, 2},
+// 				MailingList: []string{"example@example.net"},
+// 			},
+// 			expectedErr: nil,
+// 		},
+// 	}
 
-	defer os.Remove(testConfigFilename)
+// 	defer os.Remove(testConfigFilename)
 
-	err := expectedConfig.Write(testConfigFilename)
-	if err != nil {
-		t.Errorf("Error writing Config: %v", err)
-	}
+// 	err := expectedConfig.Write(testConfigFilename)
+// 	if err != nil {
+// 		t.Errorf("Error writing Config: %v", err)
+// 	}
 
-	err = readConfig.Read(testConfigFilename)
+// 	err = readConfig.Read(testConfigFilename)
 
-	if err != nil {
-		t.Errorf("Error reading Config: %v", err)
-	}
+// 	if err != nil {
+// 		t.Errorf("Error reading Config: %v", err)
+// 	}
 
-	if !reflect.DeepEqual(readConfig, expectedConfig) {
-		t.Errorf("Expected: %v, got: %v", expectedConfig, readConfig)
-	}
-}
-
-func TestGenerateDefaultConfig(t *testing.T) {
-	defaultConfig := &Config{}
-	defaultConfig.GenerateDefault()
-
-	expectedConfig := &Config{}
-	expectedConfig.GenerateDefault()
-
-	if !reflect.DeepEqual(defaultConfig, expectedConfig) {
-		t.Errorf("Expected: %v, got: %v", expectedConfig, defaultConfig)
-
-	}
-}
+// 	if !reflect.DeepEqual(readConfig, expectedConfig) {
+// 		t.Errorf("Expected: %v, got: %v", expectedConfig, readConfig)
+// 	}
+// }

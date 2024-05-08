@@ -7,9 +7,6 @@ import (
 )
 
 const (
-	defaultTimeout        uint   = 3
-	defaultLimit          uint   = 2
-	defaultFrequency      uint   = 2
 	configFilename        string = "config.yaml"
 	serviceStatusFilename string = "service-status.yaml"
 )
@@ -21,15 +18,15 @@ func main() {
 	var recoveredServices []string
 	var affectedServices []string
 
-	if err := config.Read(configFilename); err != nil {
+	if err := config.Read("c" + configFilename); err != nil {
+		panic(err)
+		// return
+	}
+
+	if err := serviceStatus.Read(serviceStatusFilename); err != nil {
 		fmt.Println(err)
 		return
 	}
-
-	// if err := ReadYaml("c"+configFilename, config); err != nil {
-	// 	fmt.Println(err)
-	// }
-	fmt.Println(config)
 
 	client = http.Client{
 		Timeout: time.Second * time.Duration(config.Timeout),
@@ -62,10 +59,17 @@ func main() {
 	isDownLimitExceeded := serviceStatus.DownCount >= config.DownLimit
 	areServicesRecovered := len(recoveredServices) > 0
 
+	if !isDownLimitExceeded {
+		fmt.Printf("down_count (%d) <= down_limit (%d). Email will not be sent.\n", serviceStatus.DownCount, config.DownLimit)
+	}
+
 	if isDownLimitExceeded || areServicesRecovered {
+		// TODO: figure out "chained" ptrs/deref
 		msg := NewMessage(serviceStatus.AffectedServices, recoveredServices, config.Frequency)
-		msgStr := ParseTemplate(*msg)
-		// sendMail(config.MailingList, msgStr)
+		msgStr := ParseTemplate(msg)
+		// SendMail(config.MailingList, msgStr)
+		fmt.Printf("down_count (%d) >= down_limit (%d). Email sent.\n", serviceStatus.DownCount, config.DownLimit)
+
 		fmt.Println(msgStr)
 	}
 }

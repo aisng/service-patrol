@@ -27,13 +27,13 @@ func readYaml(filename string, yd YamlData) error {
 	if err != nil {
 		return err
 	}
-	err = yaml.UnmarshalStrict(yamlData, yd)
 
+	err = yaml.UnmarshalStrict(yamlData, yd)
 	if err != nil {
 		if strings.Contains(err.Error(), "cannot unmarshal") {
-			return fmt.Errorf("error reading %s: incompatible value types:\n %v", filename, err)
+			return fmt.Errorf("error reading %s: file contains incompatible value type:\n %v", filename, err)
 		} else if strings.Contains(err.Error(), "not found in type") {
-			return fmt.Errorf("error reading %s: file contains unexpected fields:\n %v", filename, err)
+			return fmt.Errorf("error reading %s: file contains unexpected key:\n %v", filename, err)
 		} else {
 			return err
 		}

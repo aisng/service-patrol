@@ -11,7 +11,7 @@ import (
 const messageTemplate string = `Subject: {{.Subject}}
 Hello,
 	
-connection to the pages/IPs below is {{.GeneralStatus}}:
+connection to the pages/IPs below was {{.GeneralStatus}}:
 {{.GeneralList}}{{if .AdditionalList}}
 The following pages are still down:
 {{.AdditionalList}}{{end}}
@@ -81,7 +81,7 @@ func generateServicesList(services []string) string {
 	return list
 }
 
-func sendMail(mailingList []string, message string) {
+func SendMail(mailingList []string, message string) {
 	auth := smtp.PlainAuth(
 		"",
 		"***REMOVED***",
@@ -99,5 +99,4 @@ func sendMail(mailingList []string, message string) {
 	if err != nil {
 		fmt.Println(err)
 	}
-	fmt.Println(mailingList)
 }

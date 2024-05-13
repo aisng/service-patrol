@@ -1,5 +1,7 @@
 package main
 
+const configFilename string = "config.yaml"
+
 type Config struct {
 	DownLimit   uint     `yaml:"down_limit"`
 	Timeout     uint     `yaml:"timeout_s"`
@@ -8,6 +10,6 @@ type Config struct {
 	MailingList []string `yaml:"mailing_list"`
 }
 
-func (c *Config) Read(filename string) error {
-	return readYaml(filename, c)
+func (c *Config) Read() error {
+	return readYaml(configFilename, c)
 }

@@ -18,7 +18,7 @@ func main() {
 	var recoveredServices []string
 	var affectedServices []string
 
-	if err := config.Read("c" + configFilename); err != nil {
+	if err := config.Read(configFilename); err != nil {
 		panic(err)
 		// return
 	}

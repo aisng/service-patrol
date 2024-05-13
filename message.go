@@ -35,18 +35,18 @@ func NewMessage(downServices, recoveredServices []string, nextCheckIn uint) *Mes
 	if areServicesDown && areServicesRecovered {
 		subject = "Connection to some FMC services recovered"
 		generalStatus = "recovered"
-		generalList = generateServicesList(recoveredServices)
-		additionalList = generateServicesList(downServices)
+		generalList = formatServicesListStr(recoveredServices)
+		additionalList = formatServicesListStr(downServices)
 
 	} else if areServicesDown && !areServicesRecovered {
 		subject = "Connection to FMC services lost"
 		generalStatus = "lost"
-		generalList = generateServicesList(downServices)
+		generalList = formatServicesListStr(downServices)
 
 	} else if areServicesRecovered && !areServicesDown {
 		subject = "Connection to FMC services recovered"
 		generalStatus = "recovered"
-		generalList = generateServicesList(recoveredServices)
+		generalList = formatServicesListStr(recoveredServices)
 	}
 
 	return &Message{
@@ -71,7 +71,7 @@ func ParseTemplate(message *Message) string {
 	return output.String()
 }
 
-func generateServicesList(services []string) string {
+func formatServicesListStr(services []string) string {
 	var list string
 	for _, service := range services {
 		list += " - " + service + "\n"

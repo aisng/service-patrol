@@ -1,5 +1,10 @@
 package main
 
+import (
+	"fmt"
+	"os"
+)
+
 type ServiceStatus struct {
 	DownCount        uint     `yaml:"down_count"`
 	AffectedServices []string `yaml:"affected_services"`
@@ -18,7 +23,11 @@ func (ss *ServiceStatus) Write(filename string) error {
 
 func (ss *ServiceStatus) Read(filename string) error {
 	if err := readYaml(filename, ss); err != nil {
-		return err
+		if os.IsNotExist(err) {
+			fmt.Printf("'%s' not found and will be created if services are down.\n", filename)
+			NewServiceStatus()
+			return nil
+		}
 	}
 	ss.DownCount = 0 // reset the down count each time the app is run
 	return nil

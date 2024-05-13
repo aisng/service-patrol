@@ -18,7 +18,7 @@ func main() {
 	var recoveredServices []string
 	var affectedServices []string
 
-	if err := config.Read(configFilename); err != nil {
+	if err := config.Read("c" + configFilename); err != nil {
 		panic(err)
 		// return
 	}
@@ -66,7 +66,10 @@ func main() {
 	if isDownLimitExceeded || areServicesRecovered {
 		// TODO: figure out "chained" ptrs/deref
 		msg := NewMessage(serviceStatus.AffectedServices, recoveredServices, config.Frequency)
-		msgStr := ParseTemplate(msg)
+		msgStr, err := ParseTemplate(msg, messageTemplate)
+		if err != nil {
+			fmt.Println(err)
+		}
 		// SendMail(config.MailingList, msgStr)
 		fmt.Printf("down_count (%d) >= down_limit (%d). Email sent.\n", serviceStatus.DownCount, config.DownLimit)
 

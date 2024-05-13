@@ -23,7 +23,7 @@ func main() {
 
 	if down != nil || recovered != nil {
 		// TODO: figure out "chained" ptrs/deref
-		msg := NewMessage(down, recovered, config.Frequency)
+		msg := NewMessage(*down, *recovered, config.Frequency)
 		msgStr, err := ParseTemplate(msg, messageTemplate)
 		if err != nil {
 			fmt.Println(err)

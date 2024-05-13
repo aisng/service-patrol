@@ -2,13 +2,14 @@ package main
 
 import (
 	"bytes"
-	"fmt"
+	"errors"
+	"reflect"
 	"text/template"
 )
 
 const messageTemplate string = `Subject: {{.Subject}}
 Hello,
-	
+
 connection to the pages/IPs below was {{.GeneralStatus}}:
 {{.GeneralList}}{{if .AdditionalList}}
 The following pages are still down:
@@ -31,6 +32,10 @@ func NewMessage(downServices, recoveredServices []string, nextCheckIn uint) *Mes
 
 	areServicesDown := len(downServices) > 0
 	areServicesRecovered := len(recoveredServices) > 0
+
+	if !(areServicesDown || areServicesRecovered) {
+		return &Message{}
+	}
 
 	if areServicesDown && areServicesRecovered {
 		subject = "Connection to some FMC services recovered"
@@ -58,17 +63,21 @@ func NewMessage(downServices, recoveredServices []string, nextCheckIn uint) *Mes
 	}
 }
 
-func ParseTemplate(message *Message) string {
+func ParseTemplate(message *Message, templStr string) (string, error) {
 	var output bytes.Buffer
 
-	msgTmpl := template.Must(template.New("").Parse(messageTemplate))
+	if reflect.DeepEqual(message, &Message{}) {
+		return "", errors.New("struct is empty: nothing to parse")
+	}
+
+	msgTmpl := template.Must(template.New("").Parse(templStr))
 	err := msgTmpl.Execute(&output, message)
 
 	if err != nil {
-		fmt.Println(err)
+		return "", err
 	}
 
-	return output.String()
+	return output.String(), nil
 }
 
 func formatServicesListStr(services []string) string {

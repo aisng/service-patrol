@@ -5,10 +5,10 @@ import (
 	"time"
 )
 
-type Client *http.Client
+type HttpClient *http.Client
 
-func NewClient(timeout uint) Client {
-	return Client(&http.Client{
+func NewHttpClient(timeout uint) HttpClient {
+	return HttpClient(&http.Client{
 		Timeout: time.Second * time.Duration(timeout),
 	})
 }

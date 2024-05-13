@@ -21,7 +21,7 @@ func NewServicePatrol(config *Config, prevStatus *ServiceStatus) *ServicePatrol 
 	}
 }
 
-func (sp *ServicePatrol) Start() ([]string, []string) {
+func (sp *ServicePatrol) Start() (*[]string, *[]string) {
 	for _, serviceUrl := range sp.Config.Services {
 		isRunning, err := sp.isServiceRunning(serviceUrl)
 
@@ -40,15 +40,16 @@ func (sp *ServicePatrol) Start() ([]string, []string) {
 		}
 	}
 
-	// assign found down services to ServiceStatus struct for writing to .yaml
-	sp.PrevStatus.DownServices = sp.DownServices
-
-	if err := sp.PrevStatus.Write(); err != nil {
-		fmt.Println(err)
+	if sp.isDownFound() {
+		// assign found down services to ServiceStatus struct for writing to .yaml
+		sp.PrevStatus.DownServices = sp.DownServices
+		if err := sp.PrevStatus.Write(); err != nil {
+			fmt.Println(err)
+		}
 	}
 
 	if sp.isDownLimitExceeded() || sp.isRecoveredFound() {
-		return sp.DownServices, sp.RecoveredServices
+		return &sp.DownServices, &sp.RecoveredServices
 	}
 
 	return nil, nil
@@ -60,6 +61,10 @@ func (sp *ServicePatrol) isDownLimitExceeded() bool {
 
 func (sp *ServicePatrol) isRecoveredFound() bool {
 	return len(sp.RecoveredServices) > 0
+}
+
+func (sp *ServicePatrol) isDownFound() bool {
+	return len(sp.DownServices) > 0
 }
 
 func (sp *ServicePatrol) isServiceRunning(url string) (bool, error) {

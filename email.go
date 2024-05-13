@@ -1,27 +1,30 @@
 package main
 
 import (
-	"fmt"
 	"net/smtp"
 	"os"
 )
 
-func SendMail(mailingList []string, message string) {
+func SendMail(mailingList []string, message string) error {
+	sender := os.Getenv("MAILUSERNAME")
+	token := os.Getenv("MAILTOKEN")
+
 	auth := smtp.PlainAuth(
 		"",
-		"***REMOVED***",
-		os.Getenv("MAILTOKEN"),
+		sender,
+		token,
 		"smtp.gmail.com",
 	)
 
 	err := smtp.SendMail(
 		"smtp.gmail.com:587",
 		auth,
-		"***REMOVED***",
+		sender,
 		mailingList,
 		[]byte(message),
 	)
 	if err != nil {
-		fmt.Println(err)
+		return err
 	}
+	return nil
 }

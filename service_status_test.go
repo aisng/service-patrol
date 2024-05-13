@@ -17,56 +17,56 @@ func TestServiceStatus(t *testing.T) {
 		{
 			name: "WriteAndRead",
 			initial: ServiceStatus{
-				DownCount:        40,
-				AffectedServices: []string{"service1", "service2"},
+				DownCount:    40,
+				DownServices: []string{"service1", "service2"},
 			},
 			expected: ServiceStatus{
-				DownCount:        0,
-				AffectedServices: []string{"service1", "service2"},
+				DownCount:    0,
+				DownServices: []string{"service1", "service2"},
 			},
 		},
 		{
 			name: "Increment",
 			initial: ServiceStatus{
-				DownCount:        1,
-				AffectedServices: []string{"service1", "service2"},
+				DownCount:    1,
+				DownServices: []string{"service1", "service2"},
 			},
 			expected: ServiceStatus{
-				DownCount:        2,
-				AffectedServices: []string{"service1", "service2"},
+				DownCount:    2,
+				DownServices: []string{"service1", "service2"},
 			},
 		},
 		{
 			name: "Decrement",
 			initial: ServiceStatus{
-				DownCount:        6,
-				AffectedServices: []string{"service1", "service2"},
+				DownCount:    6,
+				DownServices: []string{"service1", "service2"},
 			},
 			expected: ServiceStatus{
-				DownCount:        5,
-				AffectedServices: []string{"service1", "service2"},
+				DownCount:    5,
+				DownServices: []string{"service1", "service2"},
 			},
 		},
 		{
-			name: "isAffected",
+			name: "IsAffected",
 			initial: ServiceStatus{
-				DownCount:        0,
-				AffectedServices: []string{"service1", "service2"},
+				DownCount:    0,
+				DownServices: []string{"service1", "service2"},
 			},
 			expected: ServiceStatus{
-				DownCount:        0,
-				AffectedServices: []string{"service1", "service2"},
+				DownCount:    0,
+				DownServices: []string{"service1", "service2"},
 			},
 		},
 		{
-			name: "isNotAffected",
+			name: "IsNotAffected",
 			initial: ServiceStatus{
-				DownCount:        40,
-				AffectedServices: []string{"service1", "service2"},
+				DownCount:    40,
+				DownServices: []string{"service1", "service2"},
 			},
 			expected: ServiceStatus{
-				DownCount:        5,
-				AffectedServices: []string{"service3", "service1"},
+				DownCount:    5,
+				DownServices: []string{"service3", "service1"},
 			},
 		},
 		{},
@@ -109,13 +109,13 @@ func TestServiceStatus(t *testing.T) {
 					t.Errorf("Expected: %v, got: %v", subtest.expected, readServiceStatus)
 				}
 
-			case "isAffected":
-				if !readServiceStatus.isAffected(subtest.expected.AffectedServices[0]) {
+			case "IsAffected":
+				if !readServiceStatus.isAffected(subtest.expected.DownServices[0]) {
 					t.Errorf("Expected: %v, got: %v", true, false)
 				}
 
-			case "isNotAffected":
-				if readServiceStatus.isAffected(subtest.expected.AffectedServices[0]) {
+			case "IsNotAffected":
+				if readServiceStatus.isAffected(subtest.expected.DownServices[0]) {
 					t.Errorf("Expected: %v, got: %v", false, true)
 				}
 

@@ -16,9 +16,9 @@ func main() {
 	var client http.Client
 	var serviceStatus ServiceStatus
 	var recoveredServices []string
-	var affectedServices []string
+	var downServices []string
 
-	if err := config.Read("c" + configFilename); err != nil {
+	if err := config.Read(configFilename); err != nil {
 		panic(err)
 		// return
 	}
@@ -40,7 +40,7 @@ func main() {
 		}
 
 		if !isRunning {
-			affectedServices = append(affectedServices, serviceUrl)
+			downServices = append(downServices, serviceUrl)
 			serviceStatus.incrementDownCount()
 		}
 
@@ -50,7 +50,7 @@ func main() {
 		}
 	}
 
-	serviceStatus.AffectedServices = affectedServices
+	serviceStatus.DownServices = downServices
 
 	if err := serviceStatus.Write(serviceStatusFilename); err != nil {
 		fmt.Println(err)
@@ -65,12 +65,16 @@ func main() {
 
 	if isDownLimitExceeded || areServicesRecovered {
 		// TODO: figure out "chained" ptrs/deref
-		msg := NewMessage(serviceStatus.AffectedServices, recoveredServices, config.Frequency)
+		msg := NewMessage(serviceStatus.DownServices, recoveredServices, config.Frequency)
 		msgStr, err := ParseTemplate(msg, messageTemplate)
 		if err != nil {
 			fmt.Println(err)
 		}
-		// SendMail(config.MailingList, msgStr)
+		// err = SendMail(config.MailingList, msgStr)
+		// if err != nil {
+		// 	fmt.Println(err)
+		// }
+
 		fmt.Printf("down_count (%d) >= down_limit (%d). Email sent.\n", serviceStatus.DownCount, config.DownLimit)
 
 		fmt.Println(msgStr)
@@ -84,4 +88,8 @@ func isServiceRunning(client *http.Client, url string) (bool, error) {
 	}
 	resp.Body.Close()
 	return true, nil
+}
+
+func GetAffectedServices(services []string) (downServices, recoveredServices []string, err error) {
+	return
 }

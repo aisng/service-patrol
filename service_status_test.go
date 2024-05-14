@@ -6,84 +6,84 @@ import (
 	"testing"
 )
 
-const testServiceStatusFilename string = "test_service-status.yaml"
+const testStatusFilename string = "test-status.yaml"
 
 func TestServiceStatus(t *testing.T) {
 	subtests := []struct {
 		name     string
-		initial  ServiceStatus
-		expected ServiceStatus
+		initial  Status
+		expected Status
 	}{
 		{
 			name: "WriteAndRead",
-			initial: ServiceStatus{
+			initial: Status{
 				DownCount:    40,
 				DownServices: []string{"service1", "service2"},
 			},
-			expected: ServiceStatus{
+			expected: Status{
 				DownCount:    0,
 				DownServices: []string{"service1", "service2"},
 			},
 		},
 		{
 			name: "Increment",
-			initial: ServiceStatus{
+			initial: Status{
 				DownCount:    1,
 				DownServices: []string{"service1", "service2"},
 			},
-			expected: ServiceStatus{
+			expected: Status{
 				DownCount:    2,
 				DownServices: []string{"service1", "service2"},
 			},
 		},
 		{
 			name: "Decrement",
-			initial: ServiceStatus{
+			initial: Status{
 				DownCount:    6,
 				DownServices: []string{"service1", "service2"},
 			},
-			expected: ServiceStatus{
+			expected: Status{
 				DownCount:    5,
 				DownServices: []string{"service1", "service2"},
 			},
 		},
 		{
 			name: "IsAffected",
-			initial: ServiceStatus{
+			initial: Status{
 				DownCount:    0,
 				DownServices: []string{"service1", "service2"},
 			},
-			expected: ServiceStatus{
+			expected: Status{
 				DownCount:    0,
 				DownServices: []string{"service1", "service2"},
 			},
 		},
 		{
 			name: "IsNotAffected",
-			initial: ServiceStatus{
+			initial: Status{
 				DownCount:    40,
 				DownServices: []string{"service1", "service2"},
 			},
-			expected: ServiceStatus{
+			expected: Status{
 				DownCount:    5,
 				DownServices: []string{"service3", "service1"},
 			},
 		},
 	}
 
-	var readServiceStatus ServiceStatus
+	var readServiceStatus Status
 
-	defer os.Remove(testServiceStatusFilename)
+	defer os.Remove(testStatusFilename)
 
 	for _, subtest := range subtests {
 		t.Run(subtest.name, func(t *testing.T) {
 			switch subtest.name {
 			case "WriteAndRead":
-				err := subtest.initial.Write(testServiceStatusFilename)
+				err := subtest.initial.Write(testStatusFilename)
 				if err != nil {
 					t.Errorf("Error writing ServiceStatus: %v", err)
 				}
-				err = readServiceStatus.Read(testServiceStatusFilename)
+				err = readServiceStatus.Read(testStatusFilename)
 				if err != nil {
 					t.Errorf("Error reading ServiceStatus: %v", err)
 				}

@@ -5,29 +5,29 @@ import (
 	"os"
 )
 
-const serviceStatusFilename string = "service-status.yaml"
+const statusFilename string = "status.yaml"
 
-type ServiceStatus struct {
+type Status struct {
 	DownCount    uint     `yaml:"down_count"`
 	DownServices []string `yaml:"down_services"`
 }
 
-func NewServiceStatus() *ServiceStatus {
-	return &ServiceStatus{
+func NewStatus() *Status {
+	return &Status{
 		DownCount:    0,
 		DownServices: []string{},
 	}
 }
 
-func (ss *ServiceStatus) Write(filename string) error {
+func (ss *Status) Write(filename string) error {
 	return writeYaml(filename, ss)
 }
 
-func (ss *ServiceStatus) Read(filename string) error {
+func (ss *Status) Read(filename string) error {
 	if err := readYaml(filename, ss); err != nil {
 		if os.IsNotExist(err) {
-			fmt.Printf("'%s' not found and will be created\n", serviceStatusFilename)
-			NewServiceStatus()
+			fmt.Printf("'%s' not found and will be created\n", statusFilename)
+			NewStatus()
 			return nil
 		}
 	}
@@ -35,17 +35,17 @@ func (ss *ServiceStatus) Read(filename string) error {
 	return nil
 }
 
-func (ss *ServiceStatus) incrementDownCount() {
+func (ss *Status) incrementDownCount() {
 	ss.DownCount++
 }
 
-func (ss *ServiceStatus) decrementDownCount() {
+func (ss *Status) decrementDownCount() {
 	if ss.DownCount > 0 {
 		ss.DownCount--
 	}
 }
 
-func (ss *ServiceStatus) isAffected(url string) bool {
+func (ss *Status) isAffected(url string) bool {
 	for _, affectedService := range ss.DownServices {
 		if url == affectedService {
 			return true

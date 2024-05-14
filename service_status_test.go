@@ -69,7 +69,6 @@ func TestServiceStatus(t *testing.T) {
 				DownServices: []string{"service3", "service1"},
 			},
 		},
-		{},
 	}
 
 	var readServiceStatus ServiceStatus

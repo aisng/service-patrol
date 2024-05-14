@@ -79,11 +79,11 @@ func TestServiceStatus(t *testing.T) {
 		t.Run(subtest.name, func(t *testing.T) {
 			switch subtest.name {
 			case "WriteAndRead":
-				err := subtest.initial.Write()
+				err := subtest.initial.Write(testServiceStatusFilename)
 				if err != nil {
 					t.Errorf("Error writing ServiceStatus: %v", err)
 				}
-				err = readServiceStatus.Read()
+				err = readServiceStatus.Read(testServiceStatusFilename)
 				if err != nil {
 					t.Errorf("Error reading ServiceStatus: %v", err)
 				}

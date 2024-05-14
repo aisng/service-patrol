@@ -26,7 +26,7 @@ func (ss *ServiceStatus) Write(filename string) error {
 func (ss *ServiceStatus) Read(filename string) error {
 	if err := readYaml(filename, ss); err != nil {
 		if os.IsNotExist(err) {
-			fmt.Printf("'%s' not found and will be created if down services are found\n", serviceStatusFilename)
+			fmt.Printf("'%s' not found and will be created\n", serviceStatusFilename)
 			NewServiceStatus()
 			return nil
 		}

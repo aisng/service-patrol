@@ -10,6 +10,6 @@ type Config struct {
 	MailingList []string `yaml:"mailing_list"`
 }
 
-func (c *Config) Read() error {
-	return readYaml(configFilename, c)
+func (c *Config) Read(filename string) error {
+	return readYaml(filename, c)
 }

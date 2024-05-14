@@ -19,12 +19,12 @@ func NewServiceStatus() *ServiceStatus {
 	}
 }
 
-func (ss *ServiceStatus) Write() error {
-	return writeYaml(serviceStatusFilename, ss)
+func (ss *ServiceStatus) Write(filename string) error {
+	return writeYaml(filename, ss)
 }
 
-func (ss *ServiceStatus) Read() error {
-	if err := readYaml(serviceStatusFilename, ss); err != nil {
+func (ss *ServiceStatus) Read(filename string) error {
+	if err := readYaml(filename, ss); err != nil {
 		if os.IsNotExist(err) {
 			fmt.Printf("'%s' not found and will be created if down services are found\n", serviceStatusFilename)
 			NewServiceStatus()

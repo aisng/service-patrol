@@ -43,7 +43,7 @@ func (sp *ServicePatrol) Start() ([]string, []string, error) {
 		}
 	}
 
-	// assign found down services to ServiceStatus struct and write to .yaml
+	// assign found down services to Status struct and write to .yaml
 	sp.PrevStatus.DownServices = sp.DownServices
 	if err := sp.PrevStatus.Write(statusFilename); err != nil {
 		return nil, nil, fmt.Errorf("error writing to %s: %v", statusFilename, err)

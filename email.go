@@ -6,8 +6,8 @@ import (
 )
 
 func SendMail(mailingList []string, message string) error {
-	sender := os.Getenv("MAILUSERNAME")
-	token := os.Getenv("MAILTOKEN")
+	sender := os.Getenv("SPMAILUSERNAME")
+	token := os.Getenv("SPMAILTOKEN")
 
 	auth := smtp.PlainAuth(
 		"",

@@ -27,15 +27,16 @@ func main() {
 	if sp.IsDownLimitExceeded() || sp.IsRecoveredFound() {
 		// TODO: figure out "chained" ptrs/deref
 		msg := NewMessage(down, recovered, config.Frequency)
-		_, err := ParseTemplate(msg, messageTemplate)
+		msgStr, err := ParseTemplate(msg, messageTemplate)
+
 		if err != nil {
 			fmt.Println(err)
 		}
 
-		// err = SendMail(config.MailingList, msgStr)
-		// if err != nil {
-		// 	fmt.Println(err)
-		// }
+		err = SendMail(config.MailingList, msgStr)
+		if err != nil {
+			panic(fmt.Errorf("error sending mail:  %v", err))
+		}
 
 		if sp.IsDownLimitExceeded() {
 			fmt.Printf("%d services are down (limit <= %d): email sent\n", status.DownCount, config.DownLimit)

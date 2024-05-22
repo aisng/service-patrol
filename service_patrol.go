@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 )
 
@@ -25,11 +26,8 @@ func (sp *ServicePatrol) Start() ([]string, []string, error) {
 	for _, serviceUrl := range sp.Config.Services {
 		isRunning, err := sp.isServiceRunning(serviceUrl)
 
-		// TODO: returning and handling errs
-		// returning err early here stops the loop.
-		// err is also expected when service is not running (client.Head() returns err)
 		if err != nil {
-			fmt.Printf("service down: %v\n", err)
+			log.Printf("service down: %s\n", serviceUrl)
 		}
 
 		if !isRunning {
@@ -46,7 +44,7 @@ func (sp *ServicePatrol) Start() ([]string, []string, error) {
 	// assign found down services to Status struct and write to .yaml
 	sp.PrevStatus.DownServices = sp.DownServices
 	if err := sp.PrevStatus.Write(statusFilename); err != nil {
-		return nil, nil, fmt.Errorf("error writing to %s: %v", statusFilename, err)
+		return nil, nil, fmt.Errorf("error writing to %q: %v", statusFilename, err)
 	}
 
 	return sp.DownServices, sp.RecoveredServices, nil

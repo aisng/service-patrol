@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	"log"
 	"os"
 )
 
@@ -26,9 +26,11 @@ func (ss *Status) Write(filename string) error {
 func (ss *Status) Read(filename string) error {
 	if err := readYaml(filename, ss); err != nil {
 		if os.IsNotExist(err) {
-			fmt.Printf("'%s' not found and will be created\n", statusFilename)
+			log.Printf("'%s' not found and will be created\n", statusFilename)
 			NewStatus()
 			return nil
+		} else {
+			return err
 		}
 	}
 	ss.DownCount = 0 // reset the down count each time the app is run

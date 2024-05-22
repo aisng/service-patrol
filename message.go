@@ -3,7 +3,6 @@ package main
 import (
 	"bytes"
 	"errors"
-	"reflect"
 	"text/template"
 )
 
@@ -34,7 +33,7 @@ func NewMessage(downServices, recoveredServices []string, nextCheckIn uint) *Mes
 	areServicesRecovered := len(recoveredServices) > 0
 
 	if !(areServicesDown || areServicesRecovered) {
-		return &Message{}
+		return nil
 	}
 
 	if areServicesDown && areServicesRecovered {
@@ -66,7 +65,11 @@ func NewMessage(downServices, recoveredServices []string, nextCheckIn uint) *Mes
 func ParseTemplate(message *Message, templStr string) (string, error) {
 	var output bytes.Buffer
 
-	if reflect.DeepEqual(message, &Message{}) {
+	// if reflect.DeepEqual(message, &Message{}) {
+	// 	return "", errors.New("struct is empty: nothing to parse")
+	// }
+
+	if message == nil {
 		return "", errors.New("struct is empty: nothing to parse")
 	}
 

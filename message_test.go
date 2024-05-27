@@ -24,6 +24,7 @@ func TestParseTemplate(t *testing.T) {
 			name: "ServicesAreDown",
 			msg:  NewMessage([]string{"service1", "service2"}, []string{}, 4),
 			expected: `Subject: Connection to FMC services lost
+
 Hello,
 
 connection to the pages/IPs below was lost:
@@ -36,6 +37,7 @@ Next check will be made after 4 hours.`,
 			name: "ServicesAreRecovered",
 			msg:  NewMessage([]string{}, []string{"service1", "service2"}, 5),
 			expected: `Subject: Connection to FMC services recovered
+
 Hello,
 
 connection to the pages/IPs below was recovered:
@@ -48,6 +50,7 @@ Next check will be made after 5 hours.`,
 			name: "ServicesAreRecoveredAndSomeAreDown",
 			msg:  NewMessage([]string{"service3", "service4"}, []string{"service1", "service2"}, 10),
 			expected: `Subject: Connection to some FMC services recovered
+
 Hello,
 
 connection to the pages/IPs below was recovered:

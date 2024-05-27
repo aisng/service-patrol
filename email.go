@@ -39,16 +39,17 @@ func SendMail(mailingList []string, message string) error {
 
 	auth := NewLoginAuth(username, password)
 	addr := "smtp-mail.outlook.com:587"
-	receiversList := "To: "
+
+	var mailingListHeader string
 
 	for i, receiver := range mailingList {
-		receiversList = receiversList + receiver
+		mailingListHeader = mailingListHeader + receiver
 		if i != len(mailingList)-1 {
-			receiversList += ", "
+			mailingListHeader += ", "
 		}
 	}
 
-	headers := fmt.Sprintf("From: %s\r\nTo: %s\r\n", username, receiversList)
+	headers := fmt.Sprintf("From: %s\r\nTo: %s\r\n", username, mailingListHeader)
 	message = headers + message
 
 	err := smtp.SendMail(

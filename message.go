@@ -66,9 +66,6 @@ func NewMessage(downServices, recoveredServices []string, nextCheckIn uint) *Mes
 func ParseTemplate(message *Message, templStr string) (string, error) {
 	var output bytes.Buffer
 
-	// if reflect.DeepEqual(message, &Message{}) {
-	// 	return "", errors.New("struct is empty: nothing to parse")
-	// }
 	if message == nil {
 		return "", errors.New("struct is empty: nothing to parse")
 	}

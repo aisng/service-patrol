@@ -20,6 +20,6 @@ mailing_list:
 In order to send an email the following env variables must be provided:
 ```bash
 SPMAILUSERNAME
-SPMAILTOKEN
+SPMAILPASSWORD
 ```
 

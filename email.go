@@ -36,39 +36,28 @@ func (a *LoginAuth) Next(fromServer []byte, more bool) ([]byte, error) {
 func SendMail(mailingList []string, message string) error {
 	username := os.Getenv("SPMAILUSERNAME")
 	password := os.Getenv("SPMAILPASSWORD")
-	// username := os.Getenv("SPMAILUSERNAMEG")
-	// password := os.Getenv("SPMAILTOKEN")
 
 	auth := NewLoginAuth(username, password)
-
-	// client, err := smtp.Dial("smtp-mail.outlook.com:587")
-	// if err != nil {
-	// 	return err
-	// }
-	// client.Auth(auth)
-	server := "smtp-mail.outlook.com:587"
-	// server := "smtp.gmail.com:587"
-
+	addr := "smtp-mail.outlook.com:587"
 	receiversList := "To: "
+
 	for i, receiver := range mailingList {
 		receiversList = receiversList + receiver
 		if i != len(mailingList)-1 {
 			receiversList += ", "
 		}
 	}
-	// fmt.Println(receiversList)
 
-	message = fmt.Sprintf("From: %s\r\n"+receiversList+"\r\n"+message, username)
+	headers := fmt.Sprintf("From: %s\r\nTo: %s\r\n", username, receiversList)
+	message = headers + message
 
-	fmt.Println(message)
 	err := smtp.SendMail(
-		server,
+		addr,
 		auth,
 		username,
 		mailingList,
 		[]byte(message),
 	)
-	// fmt.Println(message)
 	if err != nil {
 		return err
 	}

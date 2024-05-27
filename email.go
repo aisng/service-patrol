@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/smtp"
 	"os"
+	"strings"
 )
 
 type LoginAuth struct {
@@ -40,16 +41,7 @@ func SendMail(mailingList []string, message string) error {
 	auth := NewLoginAuth(username, password)
 	addr := "smtp-mail.outlook.com:587"
 
-	var mailingListHeader string
-
-	for i, receiver := range mailingList {
-		mailingListHeader = mailingListHeader + receiver
-		if i != len(mailingList)-1 {
-			mailingListHeader += ", "
-		}
-	}
-
-	headers := fmt.Sprintf("From: %s\r\nTo: %s\r\n", username, mailingListHeader)
+	headers := fmt.Sprintf("From: %s\r\nTo: %s\r\n", username, strings.Join(mailingList, ","))
 	message = headers + message
 
 	err := smtp.SendMail(

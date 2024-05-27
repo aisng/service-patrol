@@ -24,7 +24,7 @@ func main() {
 	}
 
 	if sp.IsDownLimitExceeded() || sp.IsRecoveredFound() {
-		msg := NewMessage(down, down, config.Frequency)
+		msg := NewMessage(down, recovered, config.Frequency)
 
 		msgStr, err := ParseTemplate(msg, messageTemplate)
 		if err != nil {

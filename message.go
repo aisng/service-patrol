@@ -7,6 +7,7 @@ import (
 )
 
 const messageTemplate string = `Subject: {{.Subject}}
+
 Hello,
 
 connection to the pages/IPs below was {{.GeneralStatus}}:
@@ -68,7 +69,6 @@ func ParseTemplate(message *Message, templStr string) (string, error) {
 	// if reflect.DeepEqual(message, &Message{}) {
 	// 	return "", errors.New("struct is empty: nothing to parse")
 	// }
-
 	if message == nil {
 		return "", errors.New("struct is empty: nothing to parse")
 	}

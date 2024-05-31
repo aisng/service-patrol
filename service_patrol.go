@@ -4,12 +4,18 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"regexp"
+	"strings"
+	"time"
+
+	probing "github.com/prometheus-community/pro-bing"
 )
 
 type ServicePatrol struct {
 	Config            *Config
 	PrevStatus        *Status
 	Client            *http.Client
+	Pinger            *probing.Pinger
 	RecoveredServices []string
 	DownServices      []string
 }
@@ -23,20 +29,20 @@ func NewServicePatrol(config *Config, prevStatus *Status) *ServicePatrol {
 }
 
 func (sp *ServicePatrol) Start() ([]string, []string, error) {
-	for _, serviceUrl := range sp.Config.Services {
-		isRunning, err := sp.isServiceRunning(serviceUrl)
-
+	for _, serviceAddress := range sp.Config.Services {
+		isRunning, err := sp.isServiceRunning(serviceAddress)
+		// fmt.Println(reflect.TypeOf(serviceUrl))
 		if err != nil {
-			log.Printf("service down: %s\n", serviceUrl)
+			log.Printf("service down: %s\n", serviceAddress)
 		}
 
 		if !isRunning {
-			sp.DownServices = append(sp.DownServices, serviceUrl)
+			sp.DownServices = append(sp.DownServices, serviceAddress)
 			sp.PrevStatus.incrementDownCount()
 		}
 
-		if isRunning && sp.PrevStatus.isAffected(serviceUrl) {
-			sp.RecoveredServices = append(sp.RecoveredServices, serviceUrl)
+		if isRunning && sp.PrevStatus.isAffected(serviceAddress) {
+			sp.RecoveredServices = append(sp.RecoveredServices, serviceAddress)
 			sp.PrevStatus.decrementDownCount()
 		}
 	}
@@ -62,11 +68,66 @@ func (sp *ServicePatrol) IsDownFound() bool {
 	return len(sp.DownServices) > 0
 }
 
-func (sp *ServicePatrol) isServiceRunning(url string) (bool, error) {
-	resp, err := sp.Client.Head(url)
+func (sp *ServicePatrol) isServiceRunning(addr string) (bool, error) {
+	if sp.isRawIpAddress(addr) {
+		stats, err := sp.getPingerStats(addr)
+		if err != nil {
+			return false, err
+		}
+
+		// address is unavailable when packet loss is more than 10%
+		if stats.PacketLoss > float64(sp.Config.MaxPacketLoss) {
+			return false, fmt.Errorf("SENT: %v\nRECEIVED: %v\n%% LOSS: %v", stats.PacketsSent, stats.PacketsRecv, stats.PacketLoss)
+		}
+
+		return true, nil
+	}
+
+	err := sp.sendHeadRequest(addr)
 	if err != nil {
 		return false, err
 	}
-	resp.Body.Close()
+
 	return true, nil
+}
+
+func (sp *ServicePatrol) sendHeadRequest(addr string) error {
+	hasHttp := strings.HasPrefix(addr, "http://")
+	hasHttps := strings.HasPrefix(addr, "https://")
+
+	if !(hasHttp || hasHttps) {
+		addr = "http://" + addr
+	}
+
+	resp, err := sp.Client.Head(addr)
+	if err != nil {
+		return err
+	}
+	resp.Body.Close()
+	return nil
+
+}
+
+func (sp *ServicePatrol) isRawIpAddress(addr string) bool {
+	ipv4Regex := regexp.MustCompile(`^((25[0-5]|(2[0-4]|1\d|[1-9]|)\d)\.?\b){4}$`)
+	return ipv4Regex.MatchString(addr)
+}
+
+func (sp *ServicePatrol) getPingerStats(addr string) (*probing.Statistics, error) {
+	pinger, err := probing.NewPinger(addr)
+	pinger.SetPrivileged(true)
+
+	if err != nil {
+		return nil, err
+	}
+
+	pinger.Count = 3
+	pinger.Timeout = time.Second * time.Duration(sp.Config.Timeout)
+
+	err = pinger.Run()
+	if err != nil {
+		return nil, err
+	}
+	return pinger.Statistics(), nil
+
 }

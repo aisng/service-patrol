@@ -75,9 +75,10 @@ func (sp *ServicePatrol) isServiceRunning(addr string) (bool, error) {
 			return false, err
 		}
 
-		// address is unavailable when packet loss is more than 10%
+		// packet loss amount is in percentage
 		if stats.PacketLoss > float64(sp.Config.MaxPacketLoss) {
-			return false, fmt.Errorf("SENT: %v\nRECEIVED: %v\n%% LOSS: %v", stats.PacketsSent, stats.PacketsRecv, stats.PacketLoss)
+			return false, fmt.Errorf("ADDR: %s\nSENT: %v\nRECEIVED: %v\n%% LOSS: %v",
+				addr, stats.PacketsSent, stats.PacketsRecv, stats.PacketLoss)
 		}
 
 		return true, nil

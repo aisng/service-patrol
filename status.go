@@ -12,10 +12,10 @@ type Status struct {
 	DownServices []string `yaml:"down_services"`
 }
 
-func NewStatus() *Status {
+func NewStatus(downCount uint, downServices []string) *Status {
 	return &Status{
-		DownCount:    0,
-		DownServices: []string{},
+		DownCount:    downCount,
+		DownServices: downServices,
 	}
 }
 
@@ -27,7 +27,7 @@ func (ss *Status) Read(filename string) error {
 	if err := readYaml(filename, ss); err != nil {
 		if os.IsNotExist(err) {
 			log.Printf("'%s' not found and will be created\n", statusFilename)
-			NewStatus()
+			NewStatus(0, []string{})
 			return nil
 		} else {
 			return err

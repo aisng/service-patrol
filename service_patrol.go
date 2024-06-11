@@ -15,7 +15,6 @@ type ServicePatrol struct {
 	Config            *Config
 	PrevStatus        *Status
 	Client            *http.Client
-	Pinger            *probing.Pinger
 	RecoveredServices []string
 	DownServices      []string
 }
@@ -31,9 +30,20 @@ func NewServicePatrol(config *Config, prevStatus *Status) *ServicePatrol {
 func (sp *ServicePatrol) Start() ([]string, []string, error) {
 	for _, serviceAddress := range sp.Config.Services {
 		isRunning, err := sp.isServiceRunning(serviceAddress)
-		// fmt.Println(reflect.TypeOf(serviceUrl))
+
 		if err != nil {
-			log.Printf("service down: %s\n", serviceAddress)
+			isNotPermitted := strings.Contains(err.Error(), "operation not permitted")
+			isHostNotFound := strings.Contains(err.Error(), "no such host")
+			isTimeoutExceeded := strings.Contains(err.Error(), "context deadline exceeded")
+			isPacketLimitExceeded := strings.Contains(err.Error(), "packet loss limit exceeded")
+
+			if isNotPermitted {
+				return nil, nil, fmt.Errorf("cannot ping %q: %v", serviceAddress, err)
+			} else if isTimeoutExceeded || isHostNotFound || isPacketLimitExceeded {
+				log.Printf("service down: %q: %v", serviceAddress, err)
+			} else {
+				return nil, nil, err
+			}
 		}
 
 		if !isRunning {
@@ -77,7 +87,7 @@ func (sp *ServicePatrol) isServiceRunning(addr string) (bool, error) {
 
 		// packet loss amount is in percentage
 		if stats.PacketLoss > float64(sp.Config.MaxPacketLoss) {
-			return false, fmt.Errorf("ADDR: %s\nSENT: %v\nRECEIVED: %v\n%% LOSS: %v",
+			return false, fmt.Errorf("packet loss limit exceeded: addr: %s sent: %v received: %v loss: %v",
 				addr, stats.PacketsSent, stats.PacketsRecv, stats.PacketLoss)
 		}
 

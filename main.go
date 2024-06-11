@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"time"
 )
 
 func main() {
@@ -24,8 +25,10 @@ func main() {
 		log.Fatalf("error: %v", err)
 	}
 
+	timeChecked := time.Now().Local().Format("15:04:05")
+
 	if sp.IsDownLimitExceeded() || sp.IsRecoveredFound() {
-		msg := NewMessage(down, recovered, config.Frequency)
+		msg := NewMessage(down, recovered, config.Frequency, timeChecked)
 
 		msgStr, err := ParseTemplate(msg, messageTemplate)
 		if err != nil {
@@ -38,7 +41,7 @@ func main() {
 		// }
 
 		if sp.IsDownLimitExceeded() {
-			log.Printf("%d services are down (limit <= %d): email sent\n", status.DownCount, config.DownLimit)
+			log.Printf("%d service(s) down (limit <= %d): email sent\n", status.DownCount, config.DownLimit)
 		}
 
 		if sp.IsRecoveredFound() {

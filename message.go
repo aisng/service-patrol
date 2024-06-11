@@ -14,6 +14,7 @@ connection to the pages/IPs below was {{.GeneralStatus}}:
 {{.GeneralList}}{{if .AdditionalList}}
 The following pages are still down:
 {{.AdditionalList}}{{end}}
+Checked at {{.TimeChecked}}.
 Next check will be made after {{.Frequency}} hours.`
 
 type Message struct {
@@ -21,10 +22,11 @@ type Message struct {
 	GeneralStatus  string
 	GeneralList    string
 	AdditionalList string
+	TimeChecked    string
 	Frequency      uint
 }
 
-func NewMessage(downServices, recoveredServices []string, nextCheckIn uint) *Message {
+func NewMessage(downServices, recoveredServices []string, nextCheckIn uint, timeChecked string) *Message {
 	var subject string
 	var generalStatus string
 	var generalList string
@@ -59,6 +61,7 @@ func NewMessage(downServices, recoveredServices []string, nextCheckIn uint) *Mes
 		GeneralStatus:  generalStatus,
 		GeneralList:    generalList,
 		AdditionalList: additionalList,
+		TimeChecked:    timeChecked,
 		Frequency:      nextCheckIn,
 	}
 }

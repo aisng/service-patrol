@@ -22,7 +22,7 @@ func TestParseTemplate(t *testing.T) {
 	}{
 		{
 			name: "ServicesAreDown",
-			msg:  NewMessage([]string{"service1", "service2"}, []string{}, 4),
+			msg:  NewMessage([]string{"service1", "service2"}, []string{}, 4, "00:00:00"),
 			expected: `Subject: Connection to FMC services lost
 
 Hello,
@@ -31,11 +31,12 @@ connection to the pages/IPs below was lost:
  - service1
  - service2
 
+Checked at 00:00:00.
 Next check will be made after 4 hours.`,
 		},
 		{
 			name: "ServicesAreRecovered",
-			msg:  NewMessage([]string{}, []string{"service1", "service2"}, 5),
+			msg:  NewMessage([]string{}, []string{"service1", "service2"}, 5, "00:00:00"),
 			expected: `Subject: Connection to FMC services recovered
 
 Hello,
@@ -44,11 +45,12 @@ connection to the pages/IPs below was recovered:
  - service1
  - service2
 
+Checked at 00:00:00.
 Next check will be made after 5 hours.`,
 		},
 		{
 			name: "ServicesAreRecoveredAndSomeAreDown",
-			msg:  NewMessage([]string{"service3", "service4"}, []string{"service1", "service2"}, 10),
+			msg:  NewMessage([]string{"service3", "service4"}, []string{"service1", "service2"}, 10, "00:00:00"),
 			expected: `Subject: Connection to some FMC services recovered
 
 Hello,
@@ -61,11 +63,12 @@ The following pages are still down:
  - service3
  - service4
 
+Checked at 00:00:00.
 Next check will be made after 10 hours.`,
 		},
 		{
 			name:     "ServicesAreNotDownAndNotRecovered",
-			msg:      NewMessage([]string{}, []string{}, 2),
+			msg:      NewMessage([]string{}, []string{}, 2, "00:00:00"),
 			expected: "",
 		},
 	}

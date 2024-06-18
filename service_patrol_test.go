@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"os"
 	"reflect"
 	"testing"
@@ -125,8 +124,7 @@ func TestServicePatrol(t *testing.T) {
 					subtest.status,
 				)
 				down, recovered, _ := sp.Start()
-				fmt.Printf("---- TYPE RECOVERED: %v, TYPE EXPECTED RECOVERED: %v\n", reflect.TypeOf(recovered), reflect.TypeOf(subtest.expectedResult[1]))
-				fmt.Printf("---- len RECOVERED: %v, len EXPECTED RECOVERED: %v\n", len(recovered), len(subtest.expectedResult[1]))
+
 				if !reflect.DeepEqual(down, subtest.expectedResult[0]) {
 					t.Errorf("expected: %v, got: %v", subtest.expectedResult[0], down)
 				}

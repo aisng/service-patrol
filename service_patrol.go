@@ -33,18 +33,12 @@ func (sp *ServicePatrol) Start() ([]string, []string, error) {
 
 		if err != nil {
 			isNotPermitted := strings.Contains(err.Error(), "operation not permitted")
-			isHostNotFound := strings.Contains(err.Error(), "no such host")
-			isTimeoutExceeded := strings.Contains(err.Error(), "context deadline exceeded")
-			isPacketLimitExceeded := strings.Contains(err.Error(), "packet loss limit exceeded")
-			isMisbehaving := strings.Contains(err.Error(), "server misbehaving")
 
-			if isTimeoutExceeded || isHostNotFound || isPacketLimitExceeded || isMisbehaving {
-				log.Printf("service down: %q: %v\n", serviceAddress, err)
-			} else if isNotPermitted {
+			if isNotPermitted {
 				return nil, nil, fmt.Errorf("cannot ping %q: %v", serviceAddress, err)
-			} else {
-				return nil, nil, err
 			}
+
+			log.Printf("service down: %q, %v", serviceAddress, err)
 		}
 
 		if !isRunning {

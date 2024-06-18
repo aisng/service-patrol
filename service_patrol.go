@@ -38,7 +38,7 @@ func (sp *ServicePatrol) Start() ([]string, []string, error) {
 				return nil, nil, fmt.Errorf("cannot ping %q: %v", serviceAddress, err)
 			}
 
-			log.Printf("service down: %q, %v", serviceAddress, err)
+			log.Printf("service down: %v\n", err)
 		}
 
 		if !isRunning {

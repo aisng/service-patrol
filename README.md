@@ -26,7 +26,7 @@ SPMAILPASSWORD
 
 ### Permissions
 
-Pinging raw ip addresses requires sudo privileges. `--preserve-env` (or `-E`) flag must be provided to read the env variables.
+Pinging raw ip addresses requires sudo privileges, thus `--preserve-env` (or `-E`) flag must be provided to read the env variables.
 
 ```bash
 sudo -E ./service-patrol

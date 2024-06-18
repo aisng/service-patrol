@@ -13,17 +13,17 @@ import (
 
 type ServicePatrol struct {
 	Config            *Config
-	PrevStatus        *Status
+	Status            *Status
 	Client            *http.Client
 	RecoveredServices []string
 	DownServices      []string
 }
 
-func NewServicePatrol(config *Config, prevStatus *Status) *ServicePatrol {
+func NewServicePatrol(config *Config, status *Status) *ServicePatrol {
 	return &ServicePatrol{
-		Config:     config,
-		PrevStatus: prevStatus,
-		Client:     NewHttpClient(config.Timeout),
+		Config: config,
+		Status: status,
+		Client: NewHttpClient(config.Timeout),
 	}
 }
 
@@ -36,11 +36,12 @@ func (sp *ServicePatrol) Start() ([]string, []string, error) {
 			isHostNotFound := strings.Contains(err.Error(), "no such host")
 			isTimeoutExceeded := strings.Contains(err.Error(), "context deadline exceeded")
 			isPacketLimitExceeded := strings.Contains(err.Error(), "packet loss limit exceeded")
+			isMisbehaving := strings.Contains(err.Error(), "server misbehaving")
 
-			if isNotPermitted {
+			if isTimeoutExceeded || isHostNotFound || isPacketLimitExceeded || isMisbehaving {
+				log.Printf("service down: %q: %v\n", serviceAddress, err)
+			} else if isNotPermitted {
 				return nil, nil, fmt.Errorf("cannot ping %q: %v", serviceAddress, err)
-			} else if isTimeoutExceeded || isHostNotFound || isPacketLimitExceeded {
-				log.Printf("service down: %q: %v", serviceAddress, err)
 			} else {
 				return nil, nil, err
 			}
@@ -48,18 +49,18 @@ func (sp *ServicePatrol) Start() ([]string, []string, error) {
 
 		if !isRunning {
 			sp.DownServices = append(sp.DownServices, serviceAddress)
-			sp.PrevStatus.incrementDownCount()
+			sp.Status.incrementDownCount()
 		}
 
-		if isRunning && sp.PrevStatus.isAffected(serviceAddress) {
+		if isRunning && sp.Status.isAffected(serviceAddress) {
 			sp.RecoveredServices = append(sp.RecoveredServices, serviceAddress)
-			sp.PrevStatus.decrementDownCount()
+			sp.Status.decrementDownCount()
 		}
 	}
 
 	// assign found down services to Status struct and write to .yaml
-	sp.PrevStatus.DownServices = sp.DownServices
-	if err := sp.PrevStatus.Write(statusFilename); err != nil {
+	sp.Status.DownServices = sp.DownServices
+	if err := sp.Status.Write(statusFilename); err != nil {
 		return nil, nil, fmt.Errorf("error writing to %q: %v", statusFilename, err)
 	}
 
@@ -67,7 +68,7 @@ func (sp *ServicePatrol) Start() ([]string, []string, error) {
 }
 
 func (sp *ServicePatrol) IsDownLimitExceeded() bool {
-	return sp.PrevStatus.DownCount >= sp.Config.DownLimit
+	return sp.Status.DownCount >= sp.Config.DownLimit
 }
 
 func (sp *ServicePatrol) IsRecoveredFound() bool {

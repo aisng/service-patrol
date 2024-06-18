@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"time"
 )
@@ -34,11 +33,12 @@ func main() {
 		if err != nil {
 			log.Fatalf("error parsing template: %v", err)
 		}
-		fmt.Println(msgStr)
-		// err = SendMail(config.MailingList, msgStr)
-		// if err != nil {
-		// 	log.Fatalf("error sending mail:  %v", err)
-		// }
+
+		// fmt.Println(msgStr)
+		err = SendMail(config.MailingList, msgStr)
+		if err != nil {
+			log.Fatalf("error sending mail:  %v", err)
+		}
 
 		if sp.IsDownLimitExceeded() {
 			log.Printf("%d service(s) down (limit <= %d): email sent\n", status.DownCount, config.DownLimit)

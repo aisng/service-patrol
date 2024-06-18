@@ -35,11 +35,24 @@ func (a *LoginAuth) Next(fromServer []byte, more bool) ([]byte, error) {
 }
 
 func SendMail(mailingList []string, message string) error {
+	debug := false
+
 	username := os.Getenv("SPMAILUSERNAME")
 	password := os.Getenv("SPMAILPASSWORD")
-
-	auth := NewLoginAuth(username, password)
 	addr := "smtp-mail.outlook.com:587"
+	auth := NewLoginAuth(username, password)
+
+	if debug {
+		username = os.Getenv("SPEMAILG")
+		password = os.Getenv("SPPWG")
+		auth = smtp.PlainAuth(
+			"",
+			username,
+			password,
+			"smtp.gmail.com",
+		)
+		addr = "smtp.gmail.com:587"
+	}
 
 	headers := fmt.Sprintf("From: %s\r\nTo: %s\r\n", username, strings.Join(mailingList, ","))
 	message = headers + message
@@ -51,6 +64,7 @@ func SendMail(mailingList []string, message string) error {
 		mailingList,
 		[]byte(message),
 	)
+
 	if err != nil {
 		return err
 	}

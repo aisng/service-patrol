@@ -2,12 +2,16 @@ package main
 
 import (
 	"log"
+	"os"
 	"time"
 )
 
 func main() {
 	var config Config
 	var status Status
+
+	emailUser := os.Getenv("SP_MAIL_USERNAME")
+	emailPw := os.Getenv("SP_MAIL_PASSWORD")
 
 	if err := config.Read(configFilename); err != nil {
 		log.Fatalf("failed to read config file: %q: %v", configFilename, err)
@@ -35,7 +39,7 @@ func main() {
 		}
 
 		// fmt.Println(msgStr)
-		err = SendMail(config.MailingList, msgStr)
+		err = SendMail(emailUser, emailPw, msgStr, config.MailingList)
 		if err != nil {
 			log.Fatalf("error sending mail:  %v", err)
 		}

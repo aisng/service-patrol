@@ -41,14 +41,19 @@ func main() {
 		}
 
 		if sp.IsDownLimitExceeded() {
-			log.Printf("%d service(s) down (limit <= %d): email sent\n", status.DownCount, config.DownLimit)
+			log.Printf("%d service(s) down. limit (%d) reached: email sent\n", status.DownCount, config.DownLimit)
 		}
 
 		if sp.IsRecoveredFound() {
-			log.Printf("%d services recovered: email sent\n", len(recovered))
+			log.Printf("%d service(s) recovered: email sent\n", len(recovered))
 		}
+	}
 
-	} else {
+	if status.DownCount > 0 && !sp.IsDownLimitExceeded() {
+		log.Printf("%d service(s) down. limit (%d) not reached: email not sent\n", status.DownCount, config.DownLimit)
+	}
+
+	if status.DownCount == 0 {
 		log.Println("all services are running")
 	}
 }

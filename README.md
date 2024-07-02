@@ -6,8 +6,8 @@ An application to check whether certain websites are online or offline. If a lim
 
 A `config.yaml` file must be provided in the root dir with the following fields: 
 ```bash
-down_limit: 2                   # if reached and/or exceded, an email is sent
-packet_loss_limit_percent: 10   # if reached and/or exceeded, ip address is considered unavailable
+down_limit: 2                   # if reached or exceded, an email is sent
+packet_loss_limit_percent: 10   # if reached or exceeded, ip address is considered unavailable
 timeout_s: 5                    # max timeout in seconds when pinging an address
 frequency_h: 2                  # amount of hours after which the app will be run again as configured in cron
 provider: PROV                  # name of the service(s) provider

@@ -27,7 +27,7 @@ func main() {
 	timeChecked := time.Now().Local().Format("15:04:05")
 
 	if sp.IsDownLimitExceeded() || sp.IsRecoveredFound() {
-		msg := NewMessage(down, recovered, config.Frequency, timeChecked)
+		msg := NewMessage(config.Provider, down, recovered, config.Frequency, timeChecked)
 
 		msgStr, err := ParseTemplate(msg, messageTemplate)
 		if err != nil {

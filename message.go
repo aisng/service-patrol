@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"errors"
+	"fmt"
 	"text/template"
 )
 
@@ -26,7 +27,7 @@ type Message struct {
 	Frequency      uint
 }
 
-func NewMessage(downServices, recoveredServices []string, nextCheckIn uint, timeChecked string) *Message {
+func NewMessage(provider string, downServices, recoveredServices []string, nextCheckIn uint, timeChecked string) *Message {
 	var subject string
 	var generalStatus string
 	var generalList string
@@ -40,18 +41,18 @@ func NewMessage(downServices, recoveredServices []string, nextCheckIn uint, time
 	}
 
 	if areServicesDown && areServicesRecovered {
-		subject = "Connection to some FMC services recovered"
+		subject = fmt.Sprintf("Connection to some %s services recovered", provider)
 		generalStatus = "recovered"
 		generalList = formatServicesListStr(recoveredServices)
 		additionalList = formatServicesListStr(downServices)
 
 	} else if areServicesDown && !areServicesRecovered {
-		subject = "Connection to FMC services lost"
+		subject = fmt.Sprintf("Connection to %s services lost", provider)
 		generalStatus = "lost"
 		generalList = formatServicesListStr(downServices)
 
 	} else if areServicesRecovered && !areServicesDown {
-		subject = "Connection to FMC services recovered"
+		subject = fmt.Sprintf("Connection to %s services recovered", provider)
 		generalStatus = "recovered"
 		generalList = formatServicesListStr(recoveredServices)
 	}

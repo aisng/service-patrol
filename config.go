@@ -7,6 +7,7 @@ type Config struct {
 	MaxPacketLoss uint     `yaml:"packet_loss_limit_percent"`
 	Timeout       uint     `yaml:"timeout_s"`
 	Frequency     uint     `yaml:"frequency_h"`
+	Provider      string   `yaml:"provider"`
 	Services      []string `yaml:"services"`
 	MailingList   []string `yaml:"mailing_list"`
 }

@@ -35,6 +35,4 @@ sudo -E ./service-patrol
 
 ## Notes
 
-- Currently configured with `smtp-mail.outlook.com:587` email server. 
-
-
+- Currently configured with `smtp-mail.outlook.com:587` email server with LOGIN Auth method.

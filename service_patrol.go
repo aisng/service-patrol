@@ -3,8 +3,8 @@ package main
 import (
 	"fmt"
 	"log"
+	"net"
 	"net/http"
-	"regexp"
 	"strings"
 	"time"
 
@@ -74,7 +74,7 @@ func (sp *ServicePatrol) IsDownFound() bool {
 }
 
 func (sp *ServicePatrol) isServiceRunning(addr string) (bool, error) {
-	if sp.isRawIpAddress(addr) {
+	if net.ParseIP(addr) != nil {
 		stats, err := sp.getPingerStats(addr)
 		if err != nil {
 			return false, err
@@ -112,11 +112,6 @@ func (sp *ServicePatrol) sendHeadRequest(addr string) error {
 	resp.Body.Close()
 	return nil
 
-}
-
-func (sp *ServicePatrol) isRawIpAddress(addr string) bool {
-	ipv4Regex := regexp.MustCompile(`^((25[0-5]|(2[0-4]|1\d|[1-9]|)\d)\.?\b){4}$`)
-	return ipv4Regex.MatchString(addr)
 }
 
 func (sp *ServicePatrol) getPingerStats(addr string) (*probing.Statistics, error) {

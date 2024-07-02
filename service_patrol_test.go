@@ -1,6 +1,7 @@
 package main
 
 import (
+	"net"
 	"os"
 	"reflect"
 	"testing"
@@ -201,8 +202,8 @@ func TestServicePatrol(t *testing.T) {
 					t.Errorf("Unexpected error: %v", err)
 				}
 
-				isRaw := sp.isRawIpAddress(down[0])
-				if !isRaw {
+				isRaw := net.ParseIP(down[0])
+				if isRaw == nil {
 					t.Errorf("%v is not raw ip", down[0])
 				}
 				if !reflect.DeepEqual(down, subtest.expectedResult[0]) {

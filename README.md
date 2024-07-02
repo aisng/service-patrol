@@ -6,11 +6,11 @@ An application to check whether certain websites are online or offline. If a lim
 
 A `config.yaml` file must be provided in the root dir with the following fields: 
 ```bash
-down_limit: 2                   # if reached and/or exceded, an email is sent
-packet_loss_limit_percent: 10   # if reached and/or exceeded, ipv4 addr is considered unavailable
+down_limit: 2                   # if reached or exceded, an email is sent
+packet_loss_limit_percent: 10   # if reached or exceeded, ip address is considered unavailable
 timeout_s: 5                    # max timeout in seconds when pinging an address
 frequency_h: 2                  # amount of hours after which the app will be run again as configured in cron
-provider: FMC                   # name of the services provider
+provider: PROV                  # name of the service(s) provider
 services:
 - https://www.google.com
 mailing_list:
@@ -21,8 +21,8 @@ mailing_list:
 
 In order to send an email the following env variables must be provided:
 ```bash
-SPMAILUSERNAME
-SPMAILPASSWORD
+SP_MAIL_USERNAME
+SP_MAIL_PASSWORD
 ```
 
 ### Permissions
@@ -33,4 +33,6 @@ Pinging raw ip addresses requires sudo privileges, thus `--preserve-env` (or `-E
 sudo -E ./service-patrol
 ```
 
+## Notes
 
+- Currently configured with `smtp-mail.outlook.com:587` email server with LOGIN Auth method.

@@ -10,6 +10,7 @@ down_limit: 2                   # if reached and/or exceded, an email is sent
 packet_loss_limit_percent: 10   # if reached and/or exceeded, ipv4 addr is considered unavailable
 timeout_s: 5                    # max timeout in seconds when pinging an address
 frequency_h: 2                  # amount of hours after which the app will be run again as configured in cron
+provider: FMC                   # name of the service provider
 services:
 - https://www.google.com
 mailing_list:

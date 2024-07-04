@@ -76,7 +76,7 @@ func TestWriteAndReadYaml(t *testing.T) {
 					t.Errorf("Expected: %s, got %s", subtest.expectedContent, subtest.content)
 				}
 			case "ReadNotFound":
-				err := mockData.Read("non-existant.yaml")
+				err := mockData.Read("/random/non-existant.yaml")
 				if !errors.Is(err, subtest.expectedErr) {
 					t.Errorf("Expected: %v, got: %v", subtest.expectedErr, err)
 				}

@@ -3,24 +3,34 @@ package main
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 	"strings"
 
 	"gopkg.in/yaml.v2"
 )
 
-type YamlData interface {
-}
+type YamlData interface{}
 
 func writeYaml(filename string, yd YamlData) error {
 	yamlData, err := yaml.Marshal(yd)
 	if err != nil {
 		return err
 	}
-	return os.WriteFile(filename, yamlData, 0644)
+
+	filePath, err := getFilePath(filename)
+	if err != nil {
+		return err
+	}
+	return os.WriteFile(filePath, yamlData, 0644)
 }
 
 func readYaml(filename string, yd YamlData) error {
-	yamlData, err := os.ReadFile(filename)
+	filePath, err := getFilePath(filename)
+	if err != nil {
+		return err
+	}
+
+	yamlData, err := os.ReadFile(filePath)
 	if err != nil {
 		return err
 	}
@@ -35,4 +45,12 @@ func readYaml(filename string, yd YamlData) error {
 		return err
 	}
 	return nil
+}
+
+func getFilePath(filename string) (string, error) {
+	appPath, err := os.Executable()
+	if err != nil {
+		return "", fmt.Errorf("failed to get application path: %v", err)
+	}
+	return filepath.Join(filepath.Dir(appPath), filename), nil
 }
